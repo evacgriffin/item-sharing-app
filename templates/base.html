@@ -1,0 +1,25 @@
+<!--
+This code has been adapted from:
+Template Designer Documentation - Template Inheritance - Base Template
+Retrieved on: 02/08/2025
+URL: https://jinja.palletsprojects.com/en/stable/templates/#template-inheritance
+-->
+
+<!-- Base Template -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% block head %}
+        <title>Neighborhood Emergency Item Sharing App</title>
+        {% endblock %}
+    </head>
+
+    <body>
+        <div id="content">{% block content %}{% endblock %}</div>
+        <div id="footer">
+            {% block footer %}
+            &copy; Copyright 2025 by Logan Anderson &amp; Eva Griffin
+            {% endblock %}
+        </div>
+    </body>
+</html>
