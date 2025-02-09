@@ -14,25 +14,21 @@ Retrieved on: 02/08/2025
 URL: https://github.com/osu-cs340-ecampus/flask-starter-app
 #}
 
-{# Transfers Page #}
+{# Item Categories Page #}
 
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Transfers</h1>
+    <h1>Item Categories</h1>
     <table>
         <tr>
-          <th>transferID</th>
-          <th>transferDateTime</th>
-          <th>lendingUserID</th>
-          <th>borrowingUserID</th>
+          <th>categoryID</th>
+          <th>categoryName</th>
         </tr>
-        {% for item in transfers %}
+        {% for item in item_categories %}
         <tr>
-            <td>{{item['transferID']}}</td>
-            <td>{{item['transferDateTime']}}</td>
-            <td>{{item['lendingUserID']}}</td>
-            <td>{{item['borrowingUserID']}}</td>
+            <td>{{item['categoryID']}}</td>
+            <td>{{item['categoryName']}}</td>
         </tr>
         {% endfor %}
     </table>
