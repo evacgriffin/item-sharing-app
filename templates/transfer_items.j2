@@ -1,9 +1,43 @@
-<html>
-<head>
-    <title>Neighborhood Emergency Item Sharing App</title>
-</head>
-<body>
-    <h1>Neighborhood Emergency Item Sharing App</h1>
-    <p>This is the transfer items page for our Flask app.</p>
-</body>
-</html>
+{#
+This code has been adapted from the following sources:
+
+Template Designer Documentation - Template Inheritance - Child Template
+Retrieved on: 02/08/2025
+URL: https://jinja.palletsprojects.com/en/stable/templates/#template-inheritance
+
+W3 Schools: HTML Tables
+Retrieved on: 02/08/2025
+URL: http://www.w3schools.com/html/html_tables.asp
+
+flask-starter-app
+Retrieved on: 02/08/2025
+URL: https://github.com/osu-cs340-ecampus/flask-starter-app
+#}
+
+{# Transfer Items Page #}
+
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Transfer Items</h1>
+    <table>
+        <tr>
+          <th>transferItemID</th>
+          <th>itemID</th>
+          <th>transferID</th>
+          <th>quantity</th>
+          <th>milliliters</th>
+          <th>pounds</th>
+        </tr>
+        {% for item in transfer_items %}
+        <tr>
+            <td>{{item['transferItemID']}}</td>
+            <td>{{item['itemID']}}</td>
+            <td>{{item['transferID']}}</td>
+            <td>{{item['quantity']}}</td>
+            <td>{{item['milliliters']}}</td>
+            <td>{{item['pounds']}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
