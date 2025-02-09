@@ -12,6 +12,10 @@ URL: http://www.w3schools.com/html/html_tables.asp
 flask-starter-app
 Retrieved on: 02/08/2025
 URL: https://github.com/osu-cs340-ecampus/flask-starter-app
+
+W3 Schools: HTML <button> Tag
+Retrieved on: 02/09/2025
+URL: http://www.w3schools.com/tags/tag_button.asp
 #}
 
 {# Item Categories Page #}
@@ -22,11 +26,21 @@ URL: https://github.com/osu-cs340-ecampus/flask-starter-app
     <h1>Item Categories</h1>
     <table>
         <tr>
-          <th>categoryID</th>
-          <th>categoryName</th>
+            <th>
+                <button type="button">New</button>
+            </th>
+            <th></th>
+            <th>categoryID</th>
+            <th>categoryName</th>
         </tr>
         {% for item in item_categories %}
         <tr>
+            <td>
+                <button type="button">Edit</button>
+            </td>
+            <td>
+                <button type="button">Delete</button>
+            </td>
             <td>{{item['categoryID']}}</td>
             <td>{{item['categoryName']}}</td>
         </tr>
