@@ -1,5 +1,5 @@
 /*
-This code has been copied from the following source:
+This code has been copied and adapted from the following source:
 
 W3 Schools: CSS Horizontal Navigation Bar
 Retrieved on: 02/08/2025
@@ -27,5 +27,5 @@ li a {
 }
   
 li a:hover {
-    background-color: #111;
+    background-color: lightslategrey;
 }
