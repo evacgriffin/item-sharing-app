@@ -4,8 +4,17 @@ This code has been copied and adapted from the following source:
 W3 Schools: CSS Horizontal Navigation Bar
 Retrieved on: 02/08/2025
 URL: http://www.w3schools.com/css/css_navbar_horizontal.asp
+
+W3 Schools: CSS Tables
+Retrieved on: 02/08/2025
+URL: http://www.w3schools.com/css/css_table.asp
+
+W3 Schools: CSS Table Style
+Retrieved on: 02/08/2025
+URL: http://www.w3schools.com/css/css_table_style.asp
 */
 
+/* ---------- Nav Bar ---------- */
 ul {
     list-style-type: none;
     margin: 0;
@@ -28,4 +37,21 @@ li a {
   
 li a:hover {
     background-color: lightslategrey;
+}
+
+/* ---------- Tables ---------- */
+table, th, td {
+    border: 1px solid lightslategrey;
+    border-collapse: collapse;
+    padding: 10px;
+    text-align: left;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* ---------- Footer ---------- */
+#footer {
+    margin-top: 50px;
 }
