@@ -16,6 +16,10 @@ URL: https://github.com/osu-cs340-ecampus/flask-starter-app
 W3 Schools: HTML <button> Tag
 Retrieved on: 02/09/2025
 URL: http://www.w3schools.com/tags/tag_button.asp
+
+W3 Schools: HTML <form> Tag
+Retrieved on: 02/09/2025
+URL: http://www.w3schools.com/tags/tag_form.asp
 #}
 
 {# Item Categories Page #}
@@ -46,4 +50,36 @@ URL: http://www.w3schools.com/tags/tag_button.asp
         </tr>
         {% endfor %}
     </table>
+
+    <div id="form">
+        <h2>Add New Item Category</h2>
+        <form>
+            <label>Category Name:</label>
+            <input type="text"><br><br>
+            <input type="submit" value="Submit">
+            <button type="button">Cancel</button>
+        </form>
+    </div>
+
+    <div id="form">
+        <h2>Edit Item Category</h2>
+        <form>
+            <p>categoryID: 1</p>
+            <label>Category Name:</label>
+            <input type="option" placeholder="lighting"><br><br>
+            <input type="submit" value="Submit">
+            <button type="button">Cancel</button>
+        </form>
+    </div>
+
+    <div id="form">
+        <h2>Delete Item Category</h2>
+        <form>
+            <p>Are you sure you wish to delete the following item category?</p>
+            <p>categoryID: 1</p>
+            <p>Category Name: lighting</p>
+            <input type="submit" value="Delete Transfer">
+            <button type="button">Cancel</button>
+        </form>
+    </div>
 {% endblock %}

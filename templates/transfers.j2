@@ -16,6 +16,10 @@ URL: https://github.com/osu-cs340-ecampus/flask-starter-app
 W3 Schools: HTML <button> Tag
 Retrieved on: 02/09/2025
 URL: http://www.w3schools.com/tags/tag_button.asp
+
+W3 Schools: HTML <form> Tag
+Retrieved on: 02/09/2025
+URL: http://www.w3schools.com/tags/tag_form.asp
 #}
 
 {# Transfers Page #}
@@ -50,4 +54,45 @@ URL: http://www.w3schools.com/tags/tag_button.asp
         </tr>
         {% endfor %}
     </table>
+
+    <div id="form">
+        <h2>Add New Transfer</h2>
+        <form>
+            <label>Date and Time of Transfer:</label>
+            <input type="datetime-local"><br><br>
+            <label>Lending Username:</label>
+            <input type="option"><br><br>
+            <label>Borrowing Username:</label>
+            <input type="option"><br><br>
+            <input type="submit" value="Submit">
+            <button type="button">Cancel</button>
+        </form>
+    </div>
+
+    <div id="form">
+        <h2>Edit Transfer</h2>
+        <form>
+            <p>transferID: 1</p>
+            <label>Date and Time of Transfer:</label>
+            <input type="text" placeholder="2025-02-04 11:00"><br><br>
+            <label>Lending Username:</label>
+            <input type="option" placeholder="ben.smith89"><br><br>
+            <label>Borrowing Username:</label>
+            <input type="option" placeholder="katie775"><br><br>
+            <input type="submit" value="Submit">
+            <button type="button">Cancel</button>
+        </form>
+    </div>
+
+    <div id="form">
+        <h2>Delete Transfer</h2>
+        <form>
+            <p>Are you sure you wish to delete the following transfer?</p>
+            <p>transferID: 1</p>
+            <p>Lending Username: ben.smith89</p>
+            <p>Borrowing Username: katie775</p>
+            <input type="submit" value="Delete Transfer">
+            <button type="button">Cancel</button>
+        </form>
+    </div>
 {% endblock %}
