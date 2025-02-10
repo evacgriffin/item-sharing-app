@@ -16,6 +16,10 @@ URL: https://github.com/osu-cs340-ecampus/flask-starter-app
 W3 Schools: HTML <button> Tag
 Retrieved on: 02/09/2025
 URL: http://www.w3schools.com/tags/tag_button.asp
+
+W3 Schools: HTML <form> Tag
+Retrieved on: 02/09/2025
+URL: http://www.w3schools.com/tags/tag_form.asp
 #}
 
 {# Transfer Items Page #}
@@ -54,4 +58,52 @@ URL: http://www.w3schools.com/tags/tag_button.asp
         </tr>
         {% endfor %}
     </table>
+
+    <div id="form">
+        <h2>Add New TransferItems</h2>
+        <form>
+            <label>Item Name:</label>
+            <input type="text"><br><br>
+            <label>Transfer ID:</label>
+            <input type="option"><br><br>
+            <label>Quantity:</label>
+            <input type="option"><br><br>
+            <label>Milliliters:</label>
+            <input type="option"><br><br>
+            <label>Pounds:</label>
+            <input type="option"><br><br>
+            <input type="submit" value="Submit">
+            <button type="button">Cancel</button>
+        </form>
+    </div>
+
+    <div id="form">
+        <h2>Edit TransferItems</h2>
+        <form>
+            <p>transferItemID: 1</p>
+            <label>Item Name:</label>
+            <input type="text" placeholder="AA battery">
+            <p>Transfer ID: 1</p>
+            <label>Quantity:</label>
+            <input type="option" placeholder="20"><br><br>
+            <label>Milliliters:</label>
+            <input type="option" placeholder="None"><br><br>
+            <label>Pounds:</label>
+            <input type="option" placeholder="None"><br><br>
+            <input type="submit" value="Submit">
+            <button type="button">Cancel</button>
+        </form>
+    </div>
+
+    <div id="form">
+        <h2>Delete TransferItems</h2>
+        <form>
+            <p>Are you sure you wish to delete the following transferItems?</p>
+            <p>transferItemID: 1</p>
+            <p>transferID: 1</p>
+            <p>Item Name: AA Battery</p>
+            <input type="submit" value="Delete Transfer">
+            <button type="button">Cancel</button>
+        </form>
+    </div>
 {% endblock %}
