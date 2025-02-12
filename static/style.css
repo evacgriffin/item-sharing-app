@@ -51,6 +51,13 @@ tr:nth-child(even) {
     background-color: #f2f2f2;
 }
 
+caption {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    text-align: left;
+}
+
 /* ---------- Forms ---------- */
 #form {
     border: 1px solid black;
