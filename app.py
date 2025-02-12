@@ -21,7 +21,7 @@ def root():
 
 @app.route('/user_items')
 def user_items():
-    return render_template("user_items.j2")
+    return render_template("user_items.j2", users=users_sample_data, items=items_sample_data)
 
 @app.route('/transfers')
 def transfers():
@@ -33,7 +33,7 @@ def transfer_items():
 
 @app.route('/neighborhoods')
 def neighborhoods():
-    return render_template("neighborhoods.j2")
+    return render_template("neighborhoods.j2", neighborhoods=neighborhoods_sample_data)
 
 @app.route('/item_categories')
 def item_categories():
