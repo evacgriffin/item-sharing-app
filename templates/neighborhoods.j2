@@ -16,6 +16,10 @@ URL: https://github.com/osu-cs340-ecampus/flask-starter-app
 W3 Schools: HTML <button> Tag
 Retrieved on: 02/09/2025
 URL: http://www.w3schools.com/tags/tag_button.asp
+
+W3 Schools: HTML <form> Tag
+Retrieved on: 02/09/2025
+URL: http://www.w3schools.com/tags/tag_form.asp
 #}
 
 {# Neighborhoods Page #}
@@ -23,5 +27,59 @@ URL: http://www.w3schools.com/tags/tag_button.asp
 {% extends "base.html" %}
 
 {% block content %}
+<h1>Neighborhoods</h1>
+    <table>
+        <tr>
+            <th>
+                <button type="button">New</button>
+            </th>
+            <th></th>
+            <th>neighborhoodID</th>
+            <th>neighborhoodName</th>
+        </tr>
+        {% for item in neighborhoods %}
+        <tr>
+            <td>
+                <button type="button">Edit</button>
+            </td>
+            <td>
+                <button type="button">Delete</button>
+            </td>
+            <td>{{item['neighborhoodID']}}</td>
+            <td>{{item['neighborhoodName']}}</td>
+        </tr>
+        {% endfor %}
+    </table>
 
+    <div id="form">
+        <h2>Add New Neighborhood</h2>
+        <form>
+            <label>Neighborhood Name:</label>
+            <input type="text"><br><br>
+            <input type="submit" value="Submit">
+            <button type="button">Cancel</button>
+        </form>
+    </div>
+
+    <div id="form">
+        <h2>Edit Neighborhood</h2>
+        <form>
+            <p>neighborhoodID: 1</p>
+            <label>Neighborhood Name:</label>
+            <input type="option" placeholder="Belltown"><br><br>
+            <input type="submit" value="Submit">
+            <button type="button">Cancel</button>
+        </form>
+    </div>
+
+    <div id="form">
+        <h2>Delete Neighborhood</h2>
+        <form>
+            <p>Are you sure you wish to delete the following item neighborhood?</p>
+            <p>neighborhoodID: 1</p>
+            <p>Neighborhood Name: Belltown</p>
+            <input type="submit" value="Delete Neighborhood">
+            <button type="button">Cancel</button>
+        </form>
+    </div>
 {% endblock %}
