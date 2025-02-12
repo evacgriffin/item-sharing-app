@@ -40,6 +40,72 @@ def item_categories():
     return render_template("item_categories.j2", item_categories=item_categories_sample_data)
 
 # Static Sample Data
+users_sample_data = [
+    {
+        "userID": 1,
+        "userName": "katie775",
+        "password": "example_pw_1",
+        "email": "katie775@gmail.com",
+        "neighborhoodID": 5
+    },
+    {
+        "userID": 2,
+        "userName": "friendly_neighbor3",
+        "password": "example_pw_2",
+        "email": "neighbor3@gmail.com",
+        "neighborhoodID": 3
+    },
+    {
+        "userID": 3,
+        "userName": "ben.smith89",
+        "password": "example_pw_3",
+        "email": "bsmith89@gmail.com",
+        "neighborhoodID": 4
+    },
+    {
+        "userID": 4,
+        "userName": "griff123",
+        "password": "example_pw_4",
+        "email": "griff123@hotmail.com",
+        "neighborhoodID": 1
+    },
+    {
+        "userID": 5,
+        "userName": "camper007",
+        "password": "example_pw_5",
+        "email": "camper7@gmail.com",
+        "neighborhoodID": 2
+    }
+]
+
+items_sample_data = [
+    {
+        "itemID": 1,
+        "itemName": "lantern",
+        "categoryID": 1,
+    },
+    {
+        "itemID": 2,
+        "itemName": "AA battery",
+        "categoryID": 5,
+    },
+    {
+        "itemID": 3,
+        "itemName": "water bottle",
+        "categoryID": 3,
+    },
+    {
+        "itemID": 4,
+        "itemName": "rice",
+        "categoryID": 2,
+    },
+    {
+        "itemID": 5,
+        "itemName": "beanie",
+        "categoryID": 4,
+    }
+]
+
 transfers_sample_data = [
     {
         "transferID": 1,
@@ -116,6 +182,29 @@ transfer_items_sample_data = [
     }
 ]
 
+neighborhoods_sample_data = [
+    {
+        "neighborhoodID": 1,
+        "neighborhoodName": "Belltown"
+    },
+    {
+        "neighborhoodID": 2,
+        "neighborhoodName": "South Lake Union"
+    },
+    {
+        "neighborhoodID": 3,
+        "neighborhoodName": "West Capitol Hill"
+    },
+    {
+        "neighborhoodID": 4,
+        "neighborhoodName": "Pioneer Square"
+    },
+    {
+        "neighborhoodID": 5,
+        "neighborhoodName": "Waterfront"
+    }
+]
+
 item_categories_sample_data = [
     {
         "categoryID": 1,
@@ -138,6 +227,7 @@ item_categories_sample_data = [
         "categoryName": "energy"
     }
 ]
+
 
 # Listener
 
