@@ -27,18 +27,19 @@ URL: http://www.w3schools.com/tags/tag_form.asp
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>User Items</h1>
+    <h1>Items</h1>
     <table>
-        <caption>User Item Data</caption>
+        <caption>Item Data</caption>
         <tr>
             <th>
                 <button type="button">New</button>
             </th>
             <th></th>
-            <th>userID</th>
             <th>itemID</th>
+            <th>itemName</th>
+            <th>categoryID</th>
         </tr>
-        {% for item in user_items %}
+        {% for item in items %}
         <tr>
             <td>
                 <button type="button">Edit</button>
@@ -46,18 +47,19 @@ URL: http://www.w3schools.com/tags/tag_form.asp
             <td>
                 <button type="button">Delete</button>
             </td>
-            <td>{{item['userID']}}</td>
             <td>{{item['itemID']}}</td>
+            <td>{{item['itemName']}}</td>
+            <td>{{item['categoryID']}}</td>
         </tr>
         {% endfor %}
     </table>
 
-    <div id="form">
-        <h2>Add New User Item</h2>
+        <div id="form">
+        <h2>Add New Item</h2>
         <form>
-            <label>Username:</label>
-            <input type="option"><br><br>
             <label>Item Name:</label>
+            <input type="option"><br><br>
+            <label>Item Category:</label>
             <input type="option"><br><br>
             <input type="submit" value="Submit">
             <button type="button">Cancel</button>
@@ -65,23 +67,26 @@ URL: http://www.w3schools.com/tags/tag_form.asp
     </div>
 
     <div id="form">
-        <h2>Edit User Item</h2>
+        <h2>Edit Item</h2>
         <form>
-            <p>userID: 1</p>
+            <p>itemID: 1</p>
             <label>Item Name:</label>
-            <input type="option" placeholder="beanie"><br><br>
+            <input type="option" placeholder="lantern"><br><br>
+            <label>Item Category:</label>
+            <input type="option" placeholder="lighting"><br><br>
             <input type="submit" value="Submit">
             <button type="button">Cancel</button>
         </form>
     </div>
 
     <div id="form">
-        <h2>Delete User Item</h2>
+        <h2>Delete Item</h2>
         <form>
-            <p>Are you sure you wish to delete the following user item?</p>
-            <p>userID: 1</p>
-            <p>itemID: 5</p>
-            <input type="submit" value="Delete User">
+            <p>Are you sure you wish to delete the following item?</p>
+            <p>itemID: 1</p>
+            <p>Item Name: lantern</p>
+            <p>Item Category: lighting</p>
+            <input type="submit" value="Delete Item">
             <button type="button">Cancel</button>
         </form>
     </div>
