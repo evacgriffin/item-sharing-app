@@ -75,7 +75,7 @@ users_sample_data = [
         "userName": "griff123",
         "password": "example_pw_4",
         "email": "griff123@hotmail.com",
-        "neighborhoodID": 1
+        "neighborhoodID": "NULL"
     },
     {
         "userID": 5,
@@ -166,7 +166,7 @@ transfers_sample_data = [
         "transferID": 5,
         "transferDateTime": "2025-02-01 18:30",
         "lendingUserID": 5,
-        "borrowingUserID": 4
+        "borrowingUserID": 2
     }
 ]
 
