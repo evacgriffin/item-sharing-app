@@ -35,12 +35,12 @@ URL: http://www.w3schools.com/tags/tag_form.asp
                 <button type="button">New</button>
             </th>
             <th></th>
-            <th>transferItemID</th>
-            <th>itemID</th>
-            <th>transferID</th>
-            <th>quantity</th>
-            <th>milliliters</th>
-            <th>pounds</th>
+            <th>Transfer Item ID</th>
+            <th>Item ID</th>
+            <th>Transfer ID</th>
+            <th>Quantity</th>
+            <th>Milliliters</th>
+            <th>Pounds</th>
         </tr>
         {% for item in transfer_items %}
         <tr>
@@ -61,7 +61,7 @@ URL: http://www.w3schools.com/tags/tag_form.asp
     </table>
 
     <div id="form">
-        <h2>Add New TransferItems</h2>
+        <h2>Add New Transfer Item</h2>
         <form>
             <label>Item Name:</label>
             <input type="text"><br><br>
@@ -79,9 +79,9 @@ URL: http://www.w3schools.com/tags/tag_form.asp
     </div>
 
     <div id="form">
-        <h2>Edit TransferItems</h2>
+        <h2>Edit Transfer Item</h2>
         <form>
-            <p>transferItemID: 1</p>
+            <p>Transfer Item ID: 1</p>
             <label>Item Name:</label>
             <input type="text" placeholder="AA battery">
             <p>Transfer ID: 1</p>
@@ -97,11 +97,11 @@ URL: http://www.w3schools.com/tags/tag_form.asp
     </div>
 
     <div id="form">
-        <h2>Delete TransferItems</h2>
+        <h2>Delete Transfer Item</h2>
         <form>
             <p>Are you sure you wish to delete the following transferItems?</p>
-            <p>transferItemID: 1</p>
-            <p>transferID: 1</p>
+            <p>Transfer Item ID: 1</p>
+            <p>Transfer ID: 1</p>
             <p>Item Name: AA Battery</p>
             <input type="submit" value="Delete Transfer">
             <button type="button">Cancel</button>

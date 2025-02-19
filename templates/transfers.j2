@@ -35,10 +35,10 @@ URL: http://www.w3schools.com/tags/tag_form.asp
                 <button type="button">New</button>
             </th>
             <th></th>
-            <th>transferID</th>
-            <th>transferDateTime</th>
-            <th>lendingUserID</th>
-            <th>borrowingUserID</th>
+            <th>Transfer ID</th>
+            <th>Transfer Date and Time</th>
+            <th>Lending User ID</th>
+            <th>Borrowing User ID</th>
         </tr>
         {% for item in transfers %}
         <tr>
@@ -73,7 +73,7 @@ URL: http://www.w3schools.com/tags/tag_form.asp
     <div id="form">
         <h2>Edit Transfer</h2>
         <form>
-            <p>transferID: 1</p>
+            <p>Transfer ID: 1</p>
             <label>Date and Time of Transfer:</label>
             <input type="text" placeholder="2025-02-04 11:00"><br><br>
             <label>Lending Username:</label>
@@ -89,7 +89,7 @@ URL: http://www.w3schools.com/tags/tag_form.asp
         <h2>Delete Transfer</h2>
         <form>
             <p>Are you sure you wish to delete the following transfer?</p>
-            <p>transferID: 1</p>
+            <p>Transfer ID: 1</p>
             <p>Lending Username: ben.smith89</p>
             <p>Borrowing Username: katie775</p>
             <input type="submit" value="Delete Transfer">
