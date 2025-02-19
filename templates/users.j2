@@ -27,18 +27,21 @@ URL: http://www.w3schools.com/tags/tag_form.asp
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>User Items</h1>
+    <h1>Users</h1>
     <table>
-        <caption>User Item Data</caption>
+        <caption>User Data</caption>
         <tr>
             <th>
                 <button type="button">New</button>
             </th>
             <th></th>
             <th>userID</th>
-            <th>itemID</th>
+            <th>userName</th>
+            <th>password</th>
+            <th>email</th>
+            <th>neighborhoodID</th>
         </tr>
-        {% for item in user_items %}
+        {% for item in users %}
         <tr>
             <td>
                 <button type="button">Edit</button>
@@ -47,17 +50,24 @@ URL: http://www.w3schools.com/tags/tag_form.asp
                 <button type="button">Delete</button>
             </td>
             <td>{{item['userID']}}</td>
-            <td>{{item['itemID']}}</td>
+            <td>{{item['userName']}}</td>
+            <td>{{item['password']}}</td>
+            <td>{{item['email']}}</td>
+            <td>{{item['neighborhoodID']}}</td>
         </tr>
         {% endfor %}
     </table>
 
     <div id="form">
-        <h2>Add New User Item</h2>
+        <h2>Add New User</h2>
         <form>
             <label>Username:</label>
             <input type="option"><br><br>
-            <label>Item Name:</label>
+            <label>Password:</label>
+            <input type="option"><br><br>
+            <label>Email:</label>
+            <input type="option"><br><br>
+            <label>Neighborhood:</label>
             <input type="option"><br><br>
             <input type="submit" value="Submit">
             <button type="button">Cancel</button>
@@ -65,22 +75,31 @@ URL: http://www.w3schools.com/tags/tag_form.asp
     </div>
 
     <div id="form">
-        <h2>Edit User Item</h2>
+        <h2>Edit User</h2>
         <form>
             <p>userID: 1</p>
-            <label>Item Name:</label>
-            <input type="option" placeholder="beanie"><br><br>
+            <label>Username:</label>
+            <input type="option" placeholder="katie775"><br><br>
+            <label>Password:</label>
+            <input type="option" placeholder="example_pw_1"><br><br>
+            <label>Email:</label>
+            <input type="option" placeholder="katie775@gmail.com"><br><br>
+            <label>Neighborhood:</label>
+            <input type="option" placeholder="Waterfront"><br><br>
             <input type="submit" value="Submit">
             <button type="button">Cancel</button>
         </form>
     </div>
 
     <div id="form">
-        <h2>Delete User Item</h2>
+        <h2>Delete User</h2>
         <form>
-            <p>Are you sure you wish to delete the following user item?</p>
+            <p>Are you sure you wish to delete the following user?</p>
             <p>userID: 1</p>
-            <p>itemID: 5</p>
+            <p>Username: katie775</p>
+            <p>Password: example_pw_1</p>
+            <p>Email: katie775@gmail.com</p>
+            <p>Neighborhood: Waterfront</p>
             <input type="submit" value="Delete User">
             <button type="button">Cancel</button>
         </form>

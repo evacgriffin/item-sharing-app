@@ -19,9 +19,17 @@ app = Flask(__name__)
 def root():
     return render_template("main.j2")
 
+@app.route('/users')
+def users():
+    return render_template("users.j2", users=users_sample_data)
+
+@app.route('/items')
+def items():
+    return render_template("items.j2", items=items_sample_data)
+
 @app.route('/user_items')
 def user_items():
-    return render_template("user_items.j2", users=users_sample_data, items=items_sample_data)
+    return render_template("user_items.j2", user_items=user_items_sample_data)
 
 @app.route('/transfers')
 def transfers():
@@ -104,6 +112,29 @@ items_sample_data = [
         "itemName": "beanie",
         "categoryID": 4,
     }
+]
+
+user_items_sample_data = [
+    {
+        "userID": 1,
+        "itemID": 5,
+    },
+    {
+        "userID": 1,
+        "itemID": 3,
+    },
+    {
+        "userID": 3,
+        "itemID": 2,
+    },
+    {
+        "userID": 3,
+        "itemID": 4,
+    },
+    {
+        "userID": 5,
+        "itemID": 3,
+    },
 ]
 
 transfers_sample_data = [
