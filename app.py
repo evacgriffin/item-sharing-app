@@ -1,17 +1,19 @@
 """
-This code has been adapted from the following sources:
+This code has been adapted from the following source:
 
 flask-starter-app
 Retrieved on: 02/08/2025
 URL: https://github.com/osu-cs340-ecampus/flask-starter-app
 """
 
-from flask import Flask, render_template
+import database.db_connector as db
+from flask import Flask, render_template, json
 import os
 
 # Configuration
 
 app = Flask(__name__)
+db_connection = db.connect_to_database()
 
 # Routes
 
@@ -33,7 +35,10 @@ def user_items():
 
 @app.route('/transfers')
 def transfers():
-    return render_template("transfers.j2", transfers=transfers_sample_data)
+    test_query = "SELECT * FROM Transfers;"
+    cursor = db.execute_query(db_connection=db_connection, query=test_query)
+    query_results = cursor.fetchall()
+    return render_template("transfers.j2", transfers=query_results)
 
 @app.route('/transfer_items')
 def transfer_items():
