@@ -7,13 +7,26 @@ URL: https://github.com/osu-cs340-ecampus/flask-starter-app
 """
 
 import database.db_connector as db
-from flask import Flask, render_template, json
+from dotenv import load_dotenv
+from flask import Flask, redirect, render_template, request, json
+from flask_mysqldb import MySQL
 import os
 
 # Configuration
 
 app = Flask(__name__)
-db_connection = db.connect_to_database()
+
+# Load environment variables from the .env file
+load_dotenv()
+
+# Set application variables
+APP_MYSQL_HOST = os.getenv("APP_MYSQL_HOST")
+APP_MYSQL_USER = os.getenv("APP_MYSQL_USER")
+APP_MYSQL_PASSWORD = os.getenv("APP_MYSQL_PASSWORD")
+APP_MYSQL_DB_NAME = os.getenv("APP_MYSQL_DB_NAME")
+APP_PORT = int(os.getenv("PORT", 4281))
+
+db_connection = db.connect_to_database(APP_MYSQL_HOST, APP_MYSQL_USER, APP_MYSQL_PASSWORD, APP_MYSQL_DB_NAME)
 
 # Routes
 
@@ -33,12 +46,15 @@ def items():
 def user_items():
     return render_template("user_items.j2", user_items=user_items_sample_data)
 
-@app.route('/transfers')
+@app.route('/transfers', methods=["POST", "GET"])
 def transfers():
-    test_query = "SELECT * FROM Transfers;"
-    cursor = db.execute_query(db_connection=db_connection, query=test_query)
-    query_results = cursor.fetchall()
-    return render_template("transfers.j2", transfers=query_results)
+    # Get the Transfers data for display
+    if request.method == "GET":
+        transfers_get_query = 'SELECT transferID AS "Transfer ID", transferDateTime AS "Transfer Date and Time", lendingUserID AS "Lending User ID", borrowingUserID AS "Borrowing User ID" FROM Transfers;'
+        cursor = db.execute_query(db_connection=db_connection, query=transfers_get_query)
+        query_results = cursor.fetchall()
+        return render_template("transfers.j2", transfers=query_results)
+
 
 @app.route('/transfer_items')
 def transfer_items():
@@ -48,9 +64,24 @@ def transfer_items():
 def neighborhoods():
     return render_template("neighborhoods.j2", neighborhoods=neighborhoods_sample_data)
 
-@app.route('/item_categories')
+@app.route('/item_categories', methods=["POST", "GET"])
 def item_categories():
-    return render_template("item_categories.j2", item_categories=item_categories_sample_data)
+    # Get the Item Categories data for display
+    if request.method == "GET":
+        item_categories_get_query = 'SELECT categoryID AS "Category ID", categoryName AS "Category Name" FROM ItemCategories;'
+        cursor = db.execute_query(db_connection=db_connection, query=item_categories_get_query)
+        query_results = cursor.fetchall()
+        return render_template("item_categories.j2", item_categories=query_results)
+    
+    # Post new entry to Item Categories
+    if request.method == "POST":
+        if request.form.get("add_item_category"):
+            category_name = request.form["category_name"]
+
+        item_categories_add_query = 'INSERT INTO ItemCategories (categoryName) VALUES (%s);'
+        cursor = db.execute_query(db_connection=db_connection, query=item_categories_add_query, query_params=(category_name))
+        query_results = cursor.fetchall()
+        return redirect('/item_categories')
 
 # Static Sample Data
 users_sample_data = [
@@ -142,39 +173,6 @@ user_items_sample_data = [
     },
 ]
 
-transfers_sample_data = [
-    {
-        "transferID": 1,
-        "transferDateTime": "2025-02-04 11:00",
-        "lendingUserID": 3,
-        "borrowingUserID": 1
-    },
-    {
-        "transferID": 2,
-        "transferDateTime": "2025-02-07 15:30",
-        "lendingUserID": 3,
-        "borrowingUserID": 2
-    },
-    {
-        "transferID": 3,
-        "transferDateTime": "2025-01-27 17:45",
-        "lendingUserID": 1,
-        "borrowingUserID": 2
-    },
-    {
-        "transferID": 4,
-        "transferDateTime": "2025-01-01 10:00",
-        "lendingUserID": 1,
-        "borrowingUserID": 3
-    },
-    {
-        "transferID": 5,
-        "transferDateTime": "2025-02-01 18:30",
-        "lendingUserID": 5,
-        "borrowingUserID": 2
-    }
-]
-
 transfer_items_sample_data = [
     {
         "transferItemID": 1,
@@ -241,33 +239,10 @@ neighborhoods_sample_data = [
     }
 ]
 
-item_categories_sample_data = [
-    {
-        "categoryID": 1,
-        "categoryName": "lighting"
-    },
-    {
-        "categoryID": 2,
-        "categoryName": "food"
-    },
-    {
-        "categoryID": 3,
-        "categoryName": "drinks"
-    },
-    {
-        "categoryID": 4,
-        "categoryName": "clothing"
-    },
-    {
-        "categoryID": 5,
-        "categoryName": "energy"
-    }
-]
-
 
 # Listener
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 4281))
+    port = APP_PORT
 
     app.run(port=port)
