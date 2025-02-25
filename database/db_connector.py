@@ -7,20 +7,9 @@ URL: https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/database
 """
 
 import MySQLdb
-import os
-from dotenv import load_dotenv, find_dotenv
-
-# Load environment variables from the .env file
-load_dotenv()
-
-# Set application variables
-HOST = os.getenv("340DBHOST")
-USER = os.getenv("340DBUSER")
-PW = os.getenv("340DBPW")
-DB = os.getenv("340DB")
 
 
-def connect_to_database(host = HOST, user = USER, passwd = PW, db = DB):
+def connect_to_database(host, user, passwd, db):
     '''
     Connects to a database and returns a database object
     '''
