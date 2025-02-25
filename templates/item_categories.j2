@@ -35,10 +35,11 @@ URL: http://www.w3schools.com/tags/tag_form.asp
                 <button type="button">New</button>
             </th>
             <th></th>
-            <th>Category ID</th>
-            <th>Category Name</th>
+            {% for key in item_categories[0].keys()%}
+            <th>{{key}}</th>
+            {% endfor %}
         </tr>
-        {% for item in item_categories %}
+        {% for item_category in item_categories %}
         <tr>
             <td>
                 <button type="button">Edit</button>
@@ -46,18 +47,19 @@ URL: http://www.w3schools.com/tags/tag_form.asp
             <td>
                 <button type="button">Delete</button>
             </td>
-            <td>{{item['categoryID']}}</td>
-            <td>{{item['categoryName']}}</td>
+            {% for key in item_category.keys() %}
+            <td>{{item_category[key]}}</td>
+            {% endfor %}
         </tr>
         {% endfor %}
     </table>
 
     <div id="form">
         <h2>Add New Item Category</h2>
-        <form>
+        <form method="post">
             <label>Category Name:</label>
-            <input type="text"><br><br>
-            <input type="submit" value="Submit">
+            <input type="text" name="category_name"><br><br>
+            <input type="submit" value="Submit" name="add_item_category">
             <button type="button">Cancel</button>
         </form>
     </div>

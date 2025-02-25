@@ -35,14 +35,11 @@ URL: http://www.w3schools.com/tags/tag_form.asp
                 <button type="button">New</button>
             </th>
             <th></th>
-            <th>Transfer Item ID</th>
-            <th>Item ID</th>
-            <th>Transfer ID</th>
-            <th>Quantity</th>
-            <th>Milliliters</th>
-            <th>Pounds</th>
+            {% for key in transfer_items[0].keys()%}
+            <th>{{key}}</th>
+            {% endfor %}
         </tr>
-        {% for item in transfer_items %}
+        {% for transfer_item in transfer_items %}
         <tr>
             <td>
                 <button type="button">Edit</button>
@@ -50,12 +47,9 @@ URL: http://www.w3schools.com/tags/tag_form.asp
             <td>
                 <button type="button">Delete</button>
             </td>
-            <td>{{item['transferItemID']}}</td>
-            <td>{{item['itemID']}}</td>
-            <td>{{item['transferID']}}</td>
-            <td>{{item['quantity']}}</td>
-            <td>{{item['milliliters']}}</td>
-            <td>{{item['pounds']}}</td>
+            {% for key in transfer_item.keys() %}
+            <td>{{transfer_item[key]}}</td>
+            {% endfor %}
         </tr>
         {% endfor %}
     </table>

@@ -35,10 +35,11 @@ URL: http://www.w3schools.com/tags/tag_form.asp
                 <button type="button">New</button>
             </th>
             <th></th>
-            <th>Neighborhood ID</th>
-            <th>Neighborhood Name</th>
+            {% for key in neighborhoods[0].keys()%}
+            <th>{{key}}</th>
+            {% endfor %}
         </tr>
-        {% for item in neighborhoods %}
+        {% for neighborhood in neighborhoods %}
         <tr>
             <td>
                 <button type="button">Edit</button>
@@ -46,8 +47,9 @@ URL: http://www.w3schools.com/tags/tag_form.asp
             <td>
                 <button type="button">Delete</button>
             </td>
-            <td>{{item['neighborhoodID']}}</td>
-            <td>{{item['neighborhoodName']}}</td>
+            {% for key in neighborhood.keys() %}
+            <td>{{neighborhood[key]}}</td>
+            {% endfor %}
         </tr>
         {% endfor %}
     </table>

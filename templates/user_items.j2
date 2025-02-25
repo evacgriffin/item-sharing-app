@@ -35,10 +35,11 @@ URL: http://www.w3schools.com/tags/tag_form.asp
                 <button type="button">New</button>
             </th>
             <th></th>
-            <th>User ID</th>
-            <th>Item ID</th>
+            {% for key in user_items[0].keys()%}
+            <th>{{key}}</th>
+            {% endfor %}
         </tr>
-        {% for item in user_items %}
+        {% for user_item in user_items %}
         <tr>
             <td>
                 <button type="button">Edit</button>
@@ -46,8 +47,9 @@ URL: http://www.w3schools.com/tags/tag_form.asp
             <td>
                 <button type="button">Delete</button>
             </td>
-            <td>{{item['userID']}}</td>
-            <td>{{item['itemID']}}</td>
+            {% for key in user_item.keys() %}
+            <td>{{user_item[key]}}</td>
+            {% endfor %}
         </tr>
         {% endfor %}
     </table>
