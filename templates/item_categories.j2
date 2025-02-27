@@ -32,7 +32,6 @@ URL: http://www.w3schools.com/tags/tag_form.asp
         <caption>Item Category Data</caption>
         <tr>
             <th>
-                <button type="button">New</button>
             </th>
             <th></th>
             {% for key in item_categories[0].keys()%}
@@ -42,10 +41,10 @@ URL: http://www.w3schools.com/tags/tag_form.asp
         {% for item_category in item_categories %}
         <tr>
             <td>
-                <button type="button">Edit</button>
+                <a href="/edit_item_categories/{{item_category['Category ID']}}">Edit</a>
             </td>
             <td>
-                <button type="button">Delete</button>
+                <a href="/delete_item_categories/{{item_category['Category ID']}}">Delete</a>
             </td>
             {% for key in item_category.keys() %}
             <td>{{item_category[key]}}</td>
@@ -58,30 +57,8 @@ URL: http://www.w3schools.com/tags/tag_form.asp
         <h2>Add New Item Category</h2>
         <form method="post">
             <label>Category Name:</label>
-            <input type="text" name="category_name"><br><br>
+            <input type="text" id="category_name" name="category_name"><br><br>
             <input type="submit" value="Submit" name="add_item_category">
-            <button type="button">Cancel</button>
-        </form>
-    </div>
-
-    <div id="form">
-        <h2>Edit Item Category</h2>
-        <form>
-            <p>Category ID: 1</p>
-            <label>Category Name:</label>
-            <input type="option" placeholder="lighting"><br><br>
-            <input type="submit" value="Submit">
-            <button type="button">Cancel</button>
-        </form>
-    </div>
-
-    <div id="form">
-        <h2>Delete Item Category</h2>
-        <form>
-            <p>Are you sure you wish to delete the following item category?</p>
-            <p>Category ID: 1</p>
-            <p>Category Name: lighting</p>
-            <input type="submit" value="Delete Transfer">
             <button type="button">Cancel</button>
         </form>
     </div>
