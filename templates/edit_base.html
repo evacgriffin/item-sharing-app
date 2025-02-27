@@ -4,36 +4,20 @@ This code has been adapted from the following sources:
 Template Designer Documentation - Template Inheritance - Base Template
 Retrieved on: 02/08/2025
 URL: https://jinja.palletsprojects.com/en/stable/templates/#template-inheritance
-
-W3 Schools: CSS Navigation Bars
-Retrieved on: 02/08/2025
-URL: http://www.w3schools.com/css/css_navbar.asp
 -->
 
-<!-- Base Template -->
+<!-- Edit Page Base Template -->
 <!DOCTYPE html>
 <html lang="en">
     <head>
         {% block head %}
         <meta charset="UTF-8">
-        <link rel="stylesheet" href="static/style.css" />
+        <link rel="stylesheet" href="../static/style.css" />
         <title>Neighborhood Emergency Item Sharing App</title>
         {% endblock %}
     </head>
 
     <body>
-        <!-- Nav Bar -->
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/users">Users</a></li>
-            <li><a href="/items">Items</a></li>
-            <li><a href="/user_items">User Items</a></li>
-            <li><a href="/transfers">Transfers</a></li>
-            <li><a href="/transfer_items">Transfer Items</a></li>
-            <li><a href="/neighborhoods">Neighborhoods</a></li>
-            <li><a href="/item_categories">Item Categories</a></li>
-        </ul>
-        
         <div id="content">
             {% block content %}
             {% endblock %}
