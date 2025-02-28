@@ -24,7 +24,7 @@ APP_MYSQL_HOST = os.getenv("APP_MYSQL_HOST")
 APP_MYSQL_USER = os.getenv("APP_MYSQL_USER")
 APP_MYSQL_PASSWORD = os.getenv("APP_MYSQL_PASSWORD")
 APP_MYSQL_DB_NAME = os.getenv("APP_MYSQL_DB_NAME")
-APP_PORT = int(os.getenv("PORT", 4281))
+APP_PORT = int(os.getenv("PORT", 4282))
 
 
 def connect():
@@ -51,15 +51,65 @@ def users():
             return render_template("users.j2", users=query_results)
 
 
-@app.route('/items', methods=["GET"])
+@app.route('/items', methods=["POST", "GET"])
 def items():
+    # Create a new Item
+    if request.method == "POST":
+        if request.form.get("add_item"):
+            # Get user form inputs
+            item_name = request.form["item_name"]
+            category_name = request.form["category_name"]
+            item_add_query = 'INSERT INTO Items (itemName, categoryID) VALUES (%s, (SELECT categoryID FROM ItemCategories WHERE categoryName = %s));'
+            print(item_add_query)
+            with connect() as db_connection:
+                db.execute_query(db_connection=db_connection, query=item_add_query, query_params=(item_name, category_name, ))
+
+        return redirect('/items')
+
     # Get the Items data for display
     if request.method == "GET":
-        items_get_query = 'SELECT itemID AS "Item ID", itemName AS "Item Name", categoryID AS "Category ID" FROM Items;'
+        items_get_query = 'SELECT Items.itemID AS "Item ID", Items.itemName AS "Item Name", ItemCategories.categoryName AS "Category Name" FROM Items JOIN ItemCategories ON Items.categoryID = ItemCategories.categoryID;'
         with connect() as db_connection:
             cursor = db.execute_query(db_connection=db_connection, query=items_get_query)
             query_results = cursor.fetchall()
             return render_template("items.j2", items=query_results)
+
+# Route for updating the selected Item
+@app.route('/edit_items/<int:id>', methods=["POST", "GET"])
+def edit_items(id):
+    print(f"Received request for id: {id}")
+
+    # Get data for the Item with the specified id
+    if request.method == "GET":
+        items_get_query = 'SELECT Items.itemID AS "Item ID", Items.itemName AS "Item Name", ItemCategories.categoryName AS "Category Name" FROM Items JOIN ItemCategories ON Items.categoryID = ItemCategories.categoryID WHERE itemID = %s;'
+        with connect() as db_connection:
+            cursor = db.execute_query(db_connection=db_connection, query=items_get_query, query_params=(id,))
+            query_results = cursor.fetchall()
+            print(f"Query results: {query_results}")
+            return render_template("edit_items.j2", item=query_results)
+
+    # Update the Item with the specified id
+    if request.method == "POST":
+        # Get form input
+        item_name = request.form["item_name"]
+        category_name = request.form["category_name"]
+
+        # Execute the query to update the Item
+        item_update_query = 'UPDATE Items SET itemName = %s, categoryID = (SELECT categoryID FROM ItemCategories WHERE categoryName = %s) WHERE itemID = %s;'
+        with connect() as db_connection:
+            db.execute_query(db_connection=db_connection, query=item_update_query, query_params=(item_name, category_name, id,))
+
+        return redirect('/items')
+
+# Route for deleting the selected Item
+@app.route('/delete_items/<int:id>')
+def delete_items(id):
+    # Delete the Item with the specified id
+    items_delete_query = 'DELETE FROM Items WHERE itemID = %s;'
+    with connect() as db_connection:
+        db.execute_query(db_connection=db_connection, query=items_delete_query, query_params=(id,))
+
+    return redirect('/items')
 
 
 @app.route('/user_items', methods=["GET"])

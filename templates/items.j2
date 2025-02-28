@@ -32,7 +32,6 @@ URL: http://www.w3schools.com/tags/tag_form.asp
         <caption>Item Data</caption>
         <tr>
             <th>
-                <button type="button">New</button>
             </th>
             <th></th>
             {% for key in items[0].keys()%}
@@ -42,10 +41,10 @@ URL: http://www.w3schools.com/tags/tag_form.asp
         {% for item in items %}
         <tr>
             <td>
-                <button type="button">Edit</button>
+                <a href="/edit_items/{{item['Item ID']}}">Edit</a>
             </td>
             <td>
-                <button type="button">Delete</button>
+                <a href="/delete_items/{{item['Item ID']}}">Delete</a>
             </td>
             {% for key in item.keys() %}
             <td>{{item[key]}}</td>
@@ -54,39 +53,14 @@ URL: http://www.w3schools.com/tags/tag_form.asp
         {% endfor %}
     </table>
 
-        <div id="form">
+    <div id="form">
         <h2>Add New Item</h2>
-        <form>
+        <form method="post">
             <label>Item Name:</label>
-            <input type="option"><br><br>
+            <input type="text" id="item_name" name="item_name"><br><br>
             <label>Item Category:</label>
-            <input type="option"><br><br>
-            <input type="submit" value="Submit">
-            <button type="button">Cancel</button>
-        </form>
-    </div>
-
-    <div id="form">
-        <h2>Edit Item</h2>
-        <form>
-            <p>Item ID: 1</p>
-            <label>Item Name:</label>
-            <input type="option" placeholder="lantern"><br><br>
-            <label>Item Category:</label>
-            <input type="option" placeholder="lighting"><br><br>
-            <input type="submit" value="Submit">
-            <button type="button">Cancel</button>
-        </form>
-    </div>
-
-    <div id="form">
-        <h2>Delete Item</h2>
-        <form>
-            <p>Are you sure you wish to delete the following item?</p>
-            <p>Item ID: 1</p>
-            <p>Item Name: lantern</p>
-            <p>Item Category: lighting</p>
-            <input type="submit" value="Delete Item">
+            <input type="text" id="category_name" name="category_name"><br><br>
+            <input type="submit" value="Submit" name="add_item">
             <button type="button">Cancel</button>
         </form>
     </div>

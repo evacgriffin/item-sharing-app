@@ -1,0 +1,65 @@
+{#
+This code has been adapted from the following sources:
+
+Template Designer Documentation - Template Inheritance - Child Template
+Retrieved on: 02/08/2025
+URL: https://jinja.palletsprojects.com/en/stable/templates/#template-inheritance
+
+W3 Schools: HTML Tables
+Retrieved on: 02/08/2025
+URL: http://www.w3schools.com/html/html_tables.asp
+
+flask-starter-app
+Retrieved on: 02/08/2025
+URL: https://github.com/osu-cs340-ecampus/flask-starter-app
+
+W3 Schools: HTML <button> Tag
+Retrieved on: 02/09/2025
+URL: http://www.w3schools.com/tags/tag_button.asp
+
+W3 Schools: HTML <form> Tag
+Retrieved on: 02/09/2025
+URL: http://www.w3schools.com/tags/tag_form.asp
+#}
+
+{# Edit Items Page #}
+
+{% extends "edit_base.html" %}
+
+{% block content %}
+    <h1>Edit Items</h1>
+    <table>
+        <caption>Editing Item:</caption>
+        <tr>
+            {% for key in item[0].keys() %}
+            <th>{{key}}</th>
+            {% endfor %}
+        </tr>
+        {% for i in item %}
+        <tr>
+            {% for key in i.keys() %}
+            <td>{{i[key]}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div id="form">
+        <form id="editItem" action="/edit_items/{{ item[0]['Item ID'] }}" method="post">
+            <legend><strong>Edit Item</strong></legend>
+
+            <fieldset>
+                <input type="hidden" value="{{item[0].itemID}}" id="itemID" name="itemID" required>
+
+                <label>Item Name:</label>
+                <input type="text" id="item_name" name="item_name">
+
+                <label>Item Category:</label>
+                <input type="text" id="category_name" name="category_name">
+            </fieldset>
+
+            <input class="btn" type="submit" name="edit_item" value="Submit">
+            <a href='/items'><input class="btn" type="button" value="Cancel"></a>
+        </form>
+    </div>
+{% endblock %}
