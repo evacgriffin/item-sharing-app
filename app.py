@@ -69,10 +69,13 @@ def items():
     # Get the Items data for display
     if request.method == "GET":
         items_get_query = 'SELECT Items.itemID AS "Item ID", Items.itemName AS "Item Name", ItemCategories.categoryName AS "Category Name" FROM Items JOIN ItemCategories ON Items.categoryID = ItemCategories.categoryID;'
+        categories_get_query = 'SELECT categoryName FROM ItemCategories;'
         with connect() as db_connection:
-            cursor = db.execute_query(db_connection=db_connection, query=items_get_query)
-            query_results = cursor.fetchall()
-            return render_template("items.j2", items=query_results)
+            items_cursor = db.execute_query(db_connection=db_connection, query=items_get_query)
+            categories_cursor = db.execute_query(db_connection=db_connection, query=categories_get_query)
+            items_query_results = items_cursor.fetchall()
+            categories_query_results = categories_cursor.fetchall()
+            return render_template("items.j2", items=items_query_results, categories=categories_query_results)
 
 # Route for updating the selected Item
 @app.route('/edit_items/<int:id>', methods=["POST", "GET"])
@@ -82,11 +85,14 @@ def edit_items(id):
     # Get data for the Item with the specified id
     if request.method == "GET":
         items_get_query = 'SELECT Items.itemID AS "Item ID", Items.itemName AS "Item Name", ItemCategories.categoryName AS "Category Name" FROM Items JOIN ItemCategories ON Items.categoryID = ItemCategories.categoryID WHERE itemID = %s;'
+        categories_get_query = 'SELECT categoryName FROM ItemCategories;'
         with connect() as db_connection:
-            cursor = db.execute_query(db_connection=db_connection, query=items_get_query, query_params=(id,))
-            query_results = cursor.fetchall()
-            print(f"Query results: {query_results}")
-            return render_template("edit_items.j2", item=query_results)
+            item_cursor = db.execute_query(db_connection=db_connection, query=items_get_query, query_params=(id,))
+            categories_cursor = db.execute_query(db_connection=db_connection, query=categories_get_query)
+            item_query_results = item_cursor.fetchall()
+            categories_query_results = categories_cursor.fetchall()
+            print(f"Query results: {item_query_results}")
+            return render_template("edit_items.j2", item=item_query_results, categories=categories_query_results)
 
     # Update the Item with the specified id
     if request.method == "POST":

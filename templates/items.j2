@@ -20,6 +20,10 @@ URL: http://www.w3schools.com/tags/tag_button.asp
 W3 Schools: HTML <form> Tag
 Retrieved on: 02/09/2025
 URL: http://www.w3schools.com/tags/tag_form.asp
+
+W3 Schools: HTML <select> Tag
+Retrieved on: 03/04/2025
+URL: http://www.w3schools.com/tags/tag_form.asp
 #}
 
 {# Items Page #}
@@ -59,7 +63,11 @@ URL: http://www.w3schools.com/tags/tag_form.asp
             <label>Item Name:</label>
             <input type="text" id="item_name" name="item_name"><br><br>
             <label>Item Category:</label>
-            <input type="text" id="category_name" name="category_name"><br><br>
+            <select id="category_name" name="category_name"><br><br>
+                {% for category in categories %}
+                    <option value="{{category['categoryName']}}">{{category['categoryName']}}</option>
+                {% endfor %}
+            </select>
             <input type="submit" value="Submit" name="add_item">
             <button type="button">Cancel</button>
         </form>
