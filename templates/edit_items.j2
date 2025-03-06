@@ -20,6 +20,10 @@ URL: http://www.w3schools.com/tags/tag_button.asp
 W3 Schools: HTML <form> Tag
 Retrieved on: 02/09/2025
 URL: http://www.w3schools.com/tags/tag_form.asp
+
+W3 Schools: HTML <select> Tag
+Retrieved on: 03/04/2025
+URL: http://www.w3schools.com/tags/tag_form.asp
 #}
 
 {# Edit Items Page #}
@@ -55,7 +59,11 @@ URL: http://www.w3schools.com/tags/tag_form.asp
                 <input type="text" id="item_name" name="item_name">
 
                 <label>Item Category:</label>
-                <input type="text" id="category_name" name="category_name">
+                <select id="category_name" name="category_name"><br><br>
+                    {% for category in categories %}
+                        <option value="{{category['categoryName']}}">{{category['categoryName']}}</option>
+                    {% endfor %}
+                </select>
             </fieldset>
 
             <input class="btn" type="submit" name="edit_item" value="Submit">
