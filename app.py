@@ -165,15 +165,37 @@ def transfers():
             return render_template("transfers.j2", transfers=transfers_query_results, lending_users=lending_users_query_results, borrowing_users=borrowing_users_query_results)
 
 
-@app.route('/transfer_items', methods=["GET"])
+@app.route('/transfer_items', methods=["POST", "GET"])
 def transfer_items():
+    # Create a new Transfer Item
+    if request.method == "POST":
+        if request.form.get("add_transfer_item"):
+            # Get user form inputs
+            transfer_id = request.form["transfer_id"]
+            transfer_item_name = request.form["transfer_item_name"]
+            quantity = request.form["quantity"]
+            milliliters = request.form["milliliters"]
+            pounds = request.form["pounds"]
+            transfer_item_add_query = 'INSERT INTO TransferItems (transferID, itemID, quantity, milliliters, pounds) VALUES (%s, (SELECT itemID FROM Items WHERE itemName = %s), %s, %s, %s);'
+            with connect() as db_connection:
+                db.execute_query(db_connection=db_connection, query=transfer_item_add_query, query_params=(transfer_id, transfer_item_name, quantity, milliliters, pounds, ))
+
+        return redirect('/transfer_items')
+    
     # Get the Transfer Items data for display
     if request.method == "GET":
-        transfer_items_get_query = 'SELECT transferItemID AS "Transfer Item ID", itemID AS "Item ID", transferID AS "Transfer ID", quantity AS Quantity, milliliters AS Milliliters, pounds AS Pounds FROM TransferItems;'
+        transfer_items_get_query = 'SELECT TransferItems.transferItemID AS "Transfer Item ID", Items.itemName AS "Item Name", Transfers.transferID AS "Transfer ID", TransferItems.quantity AS Quantity, TransferItems.milliliters AS Milliliters, TransferItems.pounds AS Pounds FROM TransferItems JOIN Items ON Items.itemID = TransferItems.itemID JOIN Transfers ON Transfers.transferID = TransferItems.transferID ORDER BY TransferItems.transferItemID;'
+        items_get_query = 'SELECT itemName FROM Items;'
+        transfers_get_query = 'SELECT transferID FROM Transfers'
         with connect() as db_connection:
-            cursor = db.execute_query(db_connection=db_connection, query=transfer_items_get_query)
-            query_results = cursor.fetchall()
-            return render_template("transfer_items.j2", transfer_items=query_results)
+            transfer_items_cursor = db.execute_query(db_connection=db_connection, query=transfer_items_get_query)
+            items_cursor = db.execute_query(db_connection=db_connection, query=items_get_query)
+            transfers_cursor = db.execute_query(db_connection=db_connection, query=transfers_get_query)
+            transfer_items_query_results = transfer_items_cursor.fetchall()
+            items_query_results = items_cursor.fetchall()
+            transfers_query_results = transfers_cursor.fetchall()
+            return render_template("transfer_items.j2", transfer_items=transfer_items_query_results, items=items_query_results, transfers=transfers_query_results)
+        
 
 @app.route('/neighborhoods', methods=["GET"])
 def neighborhoods():
@@ -184,6 +206,7 @@ def neighborhoods():
             cursor = db.execute_query(db_connection=db_connection, query=neighborhoods_get_query)
             query_results = cursor.fetchall()
             return render_template("neighborhoods.j2", neighborhoods=query_results)
+        
 
 @app.route('/item_categories', methods=["POST", "GET"])
 def item_categories():

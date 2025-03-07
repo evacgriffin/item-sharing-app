@@ -54,53 +54,40 @@ URL: http://www.w3schools.com/tags/tag_form.asp
         {% endfor %}
     </table>
 
+    {#
+    Sources used as a reference for the following block of code:
+
+    W3 Schools: HTML Form Elements
+    Retrieved on: 03/07/2025
+    URL: https://www.w3schools.com/html/html_form_elements.asp
+
+    W3 Schools: HTML Input Types
+    Retrieved on: 03/07/2025
+    URL: https://www.w3schools.com/html/html_form_input_types.asp
+    #}
     <div id="form">
         <h2>Add New Transfer Item</h2>
-        <form>
+        <form method="post">
             <label>Item Name:</label>
-            <input type="text"><br><br>
+            <select required id="transfer_item_name" name="transfer_item_name"><br><br>
+                {% for item in items %}
+                    <option value="{{item['itemName']}}">{{item['itemName']}}</option>
+                {% endfor %}
+            </select>
             <label>Transfer ID:</label>
-            <input type="option"><br><br>
+            <select required id="transfer_id" name="transfer_id"><br><br>
+                {% for transfer in transfers %}
+                    <option value="{{transfer['transferID']}}">{{transfer['transferID']}}</option>
+                {% endfor %}
+            </select>
             <label>Quantity:</label>
-            <input type="option"><br><br>
+            <input type="number" required min="1" step="1" value="1" id="quantity" name="quantity"><br><br>
             <label>Milliliters:</label>
-            <input type="option"><br><br>
+            <input type="number" min="0" step="0.01" id="milliliters" name="milliliters"><br><br>
             <label>Pounds:</label>
-            <input type="option"><br><br>
-            <input type="submit" value="Submit">
-            <button type="button">Cancel</button>
-        </form>
-    </div>
-
-    <div id="form">
-        <h2>Edit Transfer Item</h2>
-        <form>
-            <p>Transfer Item ID: 1</p>
-            <label>Item Name:</label>
-            <input type="text" placeholder="AA battery">
-            <p>Transfer ID: 1</p>
-            <p>ben.smith89 lends to katie775</p>
-            <label>Quantity:</label>
-            <input type="option" placeholder="20"><br><br>
-            <label>Milliliters:</label>
-            <input type="option" placeholder="None"><br><br>
-            <label>Pounds:</label>
-            <input type="option" placeholder="None"><br><br>
-            <input type="submit" value="Submit">
-            <button type="button">Cancel</button>
-        </form>
-    </div>
-
-    <div id="form">
-        <h2>Delete Transfer Item</h2>
-        <form>
-            <p>Are you sure you wish to delete the following transferItems?</p>
-            <p>Transfer Item ID: 1</p>
-            <p>Transfer ID: 1</p>
-            <p>ben.smith89 lends to katie775</p>
-            <p>Item Name: AA Battery</p>
-            <input type="submit" value="Delete Transfer">
-            <button type="button">Cancel</button>
+            <input type="number" min="0" step="0.01" id="pounds" name="pounds"><br><br>
+            <input type="submit" value="Submit" name="add_transfer_item">
+            <input type="reset" value="Reset">
         </form>
     </div>
 {% endblock %}
