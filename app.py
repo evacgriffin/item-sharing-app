@@ -129,15 +129,40 @@ def user_items():
             return render_template("user_items.j2", user_items=query_results)
 
 
-@app.route('/transfers', methods=["GET"])
+@app.route('/transfers', methods=["POST", "GET"])
 def transfers():
+    # Create a new Transfer
+    if request.method == "POST":
+        if request.form.get("add_transfer"):
+            # Get user form inputs
+            transfer_date_time = request.form["transfer_date_time"]
+            lending_user_name = request.form["lending_user_name"]
+            borrowing_user_name = request.form["borrowing_user_name"]
+            transfer_add_query = 'INSERT INTO Transfers (transferDateTime, lendingUserID, borrowingUserID) VALUES (%s, (SELECT userID FROM Users WHERE userName = %s), (SELECT userID FROM Users WHERE userName = %s));'
+            with connect() as db_connection:
+                db.execute_query(db_connection=db_connection, query=transfer_add_query, query_params=(transfer_date_time, lending_user_name, borrowing_user_name, ))
+
+        return redirect('/transfers')
+    
+    
     # Get the Transfers data for display
     if request.method == "GET":
-        transfers_get_query = 'SELECT transferID AS "Transfer ID", transferDateTime AS "Transfer Date and Time", lendingUserID AS "Lending User ID", borrowingUserID AS "Borrowing User ID" FROM Transfers;'
+        # Source used as a reference for the following query that JOINs on the Users table twice:
+        # Title: How to Join the Same Table Twice
+        # Author: Marija Ilic
+        # Retrieved On: 03/06/2025
+        # URL: https://learnsql.com/blog/how-to-join-same-table-twice/
+        transfers_get_query = 'SELECT TransferUsers.transferID AS "Transfer ID", TransferUsers.transferDateTime AS "Transfer Date and Time", LendingUsers.userName AS "Lending User", BorrowingUsers.userName AS "Borrowing User" FROM Transfers AS TransferUsers JOIN Users AS LendingUsers ON LendingUsers.userID = TransferUsers.lendingUserID JOIN Users AS BorrowingUsers ON BorrowingUsers.userID = TransferUsers.borrowingUserID;'
+        lending_users_get_query = 'SELECT userName AS lendingUserName FROM Users;'
+        borrowing_users_get_query = 'SELECT userName AS borrowingUserName FROM Users;'
         with connect() as db_connection:
-            cursor = db.execute_query(db_connection=db_connection, query=transfers_get_query)
-            query_results = cursor.fetchall()
-            return render_template("transfers.j2", transfers=query_results)
+            transfers_cursor = db.execute_query(db_connection=db_connection, query=transfers_get_query)
+            lending_users_cursor = db.execute_query(db_connection=db_connection, query=lending_users_get_query)
+            borrowing_users_cursor = db.execute_query(db_connection=db_connection, query=borrowing_users_get_query)
+            transfers_query_results = transfers_cursor.fetchall()
+            lending_users_query_results = lending_users_cursor.fetchall()
+            borrowing_users_query_results = borrowing_users_cursor.fetchall()
+            return render_template("transfers.j2", transfers=transfers_query_results, lending_users=lending_users_query_results, borrowing_users=borrowing_users_query_results)
 
 
 @app.route('/transfer_items', methods=["GET"])
