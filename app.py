@@ -44,7 +44,13 @@ def root():
 def users():
     # Get the Users data for display
     if request.method == "GET":
-        users_get_query = 'SELECT userID AS "User ID", username AS Username, password AS Password, email AS Email, neighborhoodID AS "Neighborhood ID" FROM Users;'
+        users_get_query = ('SELECT '
+                                'userID AS "User ID", '
+                                'username AS Username, '
+                                'password AS Password, '
+                                'email AS Email, '
+                                'neighborhoodID AS "Neighborhood ID" '
+                            'FROM Users;')
         with connect() as db_connection:
             cursor = db.execute_query(db_connection=db_connection, query=users_get_query)
             query_results = cursor.fetchall()
@@ -59,7 +65,10 @@ def items():
             # Get user form inputs
             item_name = request.form["item_name"]
             category_name = request.form["category_name"]
-            item_add_query = 'INSERT INTO Items (itemName, categoryID) VALUES (%s, (SELECT categoryID FROM ItemCategories WHERE categoryName = %s));'
+            item_add_query = ('INSERT INTO Items '
+                                '(itemName, categoryID) '
+                            'VALUES '
+                                '(%s, (SELECT categoryID FROM ItemCategories WHERE categoryName = %s));')
             print(item_add_query)
             with connect() as db_connection:
                 db.execute_query(db_connection=db_connection, query=item_add_query, query_params=(item_name, category_name, ))
@@ -68,7 +77,12 @@ def items():
 
     # Get the Items data for display
     if request.method == "GET":
-        items_get_query = 'SELECT Items.itemID AS "Item ID", Items.itemName AS "Item Name", ItemCategories.categoryName AS "Category Name" FROM Items JOIN ItemCategories ON Items.categoryID = ItemCategories.categoryID;'
+        items_get_query = ('SELECT '
+                                'Items.itemID AS "Item ID", '
+                                'Items.itemName AS "Item Name", '
+                                'ItemCategories.categoryName AS "Category Name" '
+                            'FROM Items '
+                            'JOIN ItemCategories ON Items.categoryID = ItemCategories.categoryID;')
         categories_get_query = 'SELECT categoryName FROM ItemCategories;'
         with connect() as db_connection:
             items_cursor = db.execute_query(db_connection=db_connection, query=items_get_query)
@@ -84,7 +98,13 @@ def edit_items(id):
 
     # Get data for the Item with the specified id
     if request.method == "GET":
-        item_get_query = 'SELECT Items.itemID AS "Item ID", Items.itemName AS "Item Name", ItemCategories.categoryName AS "Category Name" FROM Items JOIN ItemCategories ON Items.categoryID = ItemCategories.categoryID WHERE itemID = %s;'
+        item_get_query = ('SELECT '
+                                'Items.itemID AS "Item ID", '
+                                'Items.itemName AS "Item Name", '
+                                'ItemCategories.categoryName AS "Category Name" '
+                            'FROM Items '
+                            'JOIN ItemCategories ON Items.categoryID = ItemCategories.categoryID '
+                            'WHERE itemID = %s;')
         categories_get_query = 'SELECT categoryName FROM ItemCategories;'
         with connect() as db_connection:
             item_cursor = db.execute_query(db_connection=db_connection, query=item_get_query, query_params=(id,))
@@ -101,7 +121,10 @@ def edit_items(id):
         category_name = request.form["category_name"]
 
         # Execute the query to update the Item
-        item_update_query = 'UPDATE Items SET itemName = %s, categoryID = (SELECT categoryID FROM ItemCategories WHERE categoryName = %s) WHERE itemID = %s;'
+        item_update_query = ('UPDATE Items '
+                                'SET '
+                                    'itemName = %s, '
+                                    'categoryID = (SELECT categoryID FROM ItemCategories WHERE categoryName = %s) WHERE itemID = %s;')
         with connect() as db_connection:
             db.execute_query(db_connection=db_connection, query=item_update_query, query_params=(item_name, category_name, id,))
 
@@ -125,7 +148,11 @@ def user_items():
             # Get user form inputs
             item_name = request.form["item_name"]
             user_name = request.form["user_name"]
-            user_item_add_query = 'INSERT INTO UserItems (userID, itemID) VALUES ((SELECT userID FROM Users WHERE userName = %s), (SELECT itemID FROM Items WHERE itemName = %s));'
+            user_item_add_query = ('INSERT INTO UserItems '
+                                        '(userID, itemID) '
+                                    'VALUES '
+                                        '((SELECT userID FROM Users WHERE userName = %s), '
+                                        '(SELECT itemID FROM Items WHERE itemName = %s));')
             print(user_item_add_query)
             with connect() as db_connection:
                 db.execute_query(db_connection=db_connection, query=user_item_add_query, query_params=(user_name, item_name, ))
@@ -134,10 +161,16 @@ def user_items():
 
     # Get the User Items data for display
     if request.method == "GET":
-        user_items_get_query = 'SELECT Users.userName AS "Username", Items.itemName AS "Item Name" FROM UserItems JOIN Users ON Users.UserID = UserItems.UserID JOIN Items ON Items.itemID = UserItems.itemID;'
+        user_items_get_query = ('SELECT '
+                                    'Users.userName AS "Username", '
+                                    'Items.itemName AS "Item Name" '
+                                'FROM UserItems '
+                                'JOIN Users ON Users.UserID = UserItems.UserID '
+                                'JOIN Items ON Items.itemID = UserItems.itemID;')
         users_get_query = 'SELECT userName FROM Users;'
         items_get_query = 'SELECT itemName FROM Items;'
         ids_get_query = 'SELECT userID, itemID FROM UserItems;'
+
         with connect() as db_connection:
             user_items_cursor = db.execute_query(db_connection=db_connection, query=user_items_get_query)
             users_cursor = db.execute_query(db_connection=db_connection, query=users_get_query)
@@ -148,15 +181,25 @@ def user_items():
             users_query_results = users_cursor.fetchall()
             items_query_results = items_cursor.fetchall()
             return render_template("user_items.j2", user_items=user_items_query_results, users=users_query_results, items=items_query_results, ids=ids_query_results)
+        
+
+# Route to edit User Items
 @app.route('/edit_user_items/<int:user_id>-<int:item_id>', methods=["POST", "GET"])
 def edit_user_items(user_id, item_id):
     print(f"Received request for ids: {user_id}, {item_id}")
 
     # Get data for the User Item with the specified id
     if request.method == "GET":
-        user_item_get_query = 'SELECT Users.userName AS "Username", Items.itemName AS "Item Name" FROM UserItems JOIN Users ON Users.UserID = UserItems.UserID JOIN Items ON Items.itemID = UserItems.itemID WHERE userID = %s AND itemID = %s;'
+        user_item_get_query = ('SELECT '
+                                    'Users.userName AS "Username", '
+                                    'Items.itemName AS "Item Name" '
+                                'FROM UserItems '
+                                'JOIN Users ON Users.UserID = UserItems.UserID '
+                                'JOIN Items ON Items.itemID = UserItems.itemID '
+                                'WHERE userID = %s AND itemID = %s;')
         users_get_query = 'SELECT userName FROM Users;'
         items_get_query = 'SELECT itemName FROM Items;'
+
         with connect() as db_connection:
             user_item_cursor = db.execute_query(db_connection=db_connection, query=user_item_get_query, query_params=(user_id, item_id))
             users_cursor = db.execute_query(db_connection=db_connection, query=users_get_query)
@@ -173,21 +216,29 @@ def edit_user_items(user_id, item_id):
         item_name = request.form["item_name"]
         user_name = request.form["category_name"]
         # Execute the query to update the Item
-        item_update_query = 'UPDATE UserItems SET itemID = (SELECT itemID from Items WHERE itemName = %s), userID = (SELECT userID FROM Users WHERE userName = %s);'
+        item_update_query = ('UPDATE UserItems '
+                                'SET '
+                                    'itemID = (SELECT itemID from Items WHERE itemName = %s), '
+                                    'userID = (SELECT userID FROM Users WHERE userName = %s);')
         with connect() as db_connection:
             db.execute_query(db_connection=db_connection, query=item_update_query, query_params=(item_name, user_name,))
 
         return redirect('/user_items')
 
+
+# Route to delete User Item
 @app.route('/delete_user_items/<int:user_id>-<int:item_id>')
 def delete_user_items(user_id, item_id):
     # Delete the User Item with the specified ids
-    user_items_delete_query = 'DELETE FROM UserItems WHERE userID = %s AND itemID = %s;'
+    user_items_delete_query = ('DELETE FROM UserItems '
+                                    'WHERE userID = %s AND itemID = %s;')
     with connect() as db_connection:
         db.execute_query(db_connection=db_connection, query=user_items_delete_query, query_params=(user_id, item_id))
 
     return redirect('/user_items')
 
+
+# Transfers Route
 @app.route('/transfers', methods=["POST", "GET"])
 def transfers():
     # Create a new Transfer
@@ -310,7 +361,10 @@ def transfer_items():
             quantity = request.form["quantity"]
             milliliters = request.form["milliliters"]
             pounds = request.form["pounds"]
-            transfer_item_add_query = 'INSERT INTO TransferItems (transferID, itemID, quantity, milliliters, pounds) VALUES (%s, (SELECT itemID FROM Items WHERE itemName = %s), %s, %s, %s);'
+            transfer_item_add_query = ('INSERT INTO TransferItems '
+                                            '(transferID, itemID, quantity, milliliters, pounds) '
+                                        'VALUES '
+                                            '(%s, (SELECT itemID FROM Items WHERE itemName = %s), %s, %s, %s);')
             with connect() as db_connection:
                 db.execute_query(db_connection=db_connection, query=transfer_item_add_query, query_params=(transfer_id, transfer_item_name, quantity, milliliters, pounds, ))
 
@@ -347,13 +401,15 @@ def transfer_items():
 @app.route('/delete_transfer_items/<int:transfer_id>-<int:item_id>')
 def delete_transfer_items(transfer_id, item_id):
     # Delete the Transfer Item with the specified transferID and itemID
-    transfer_items_delete_query = 'DELETE FROM TransferItems WHERE transferID = %s AND itemID = %s;'
+    transfer_items_delete_query = ('DELETE FROM TransferItems '
+                                        'WHERE transferID = %s AND itemID = %s;')
     with connect() as db_connection:
         db.execute_query(db_connection=db_connection, query=transfer_items_delete_query, query_params=(transfer_id, item_id))
 
     return redirect('/transfer_items')
 
 
+# Neighborhoods Route
 @app.route('/neighborhoods', methods=["POST", "GET"])
 def neighborhoods():
     # Create a new Neighborhood
@@ -369,7 +425,10 @@ def neighborhoods():
 
     # Retrieve the Neighborhood data for display
     if request.method == "GET":
-        neighborhoods_get_query = 'SELECT neighborhoodID AS "Neighborhood ID", neighborhoodName AS "Neighborhood Name" FROM Neighborhoods;'
+        neighborhoods_get_query = ('SELECT '
+                                        'neighborhoodID AS "Neighborhood ID", '
+                                        'neighborhoodName AS "Neighborhood Name" '
+                                    'FROM Neighborhoods;')
         with connect() as db_connection:
             cursor = db.execute_query(db_connection=db_connection, query=neighborhoods_get_query)
             query_results = cursor.fetchall()
@@ -383,7 +442,11 @@ def edit_neighborhoods(id):
 
     # Get data for the Neighborhood with the specified id
     if request.method == "GET":
-        neighborhood_get_query = 'SELECT neighborhoodID AS "Neighborhood ID", neighborhoodName AS "Neighborhood Name" FROM Neighborhoods WHERE neighborhoodID = %s;'
+        neighborhood_get_query = ('SELECT '
+                                        'neighborhoodID AS "Neighborhood ID", '
+                                        'neighborhoodName AS "Neighborhood Name" '
+                                    'FROM Neighborhoods '
+                                    'WHERE neighborhoodID = %s;')
         with connect() as db_connection:
             cursor = db.execute_query(db_connection=db_connection, query=neighborhood_get_query, query_params=(id,))
             query_results = cursor.fetchall()
@@ -396,12 +459,16 @@ def edit_neighborhoods(id):
         neighborhood_name = request.form["neighborhood_name"]
 
         # Execute the query to update the Neighborhood
-        neighborhood_update_query = 'UPDATE Neighborhoods SET neighborhoodName = %s WHERE neighborhoodID = %s;'
+        neighborhood_update_query = ('UPDATE Neighborhoods '
+                                        'SET neighborhoodName = %s '
+                                        'WHERE neighborhoodID = %s;')
         with connect() as db_connection:
             db.execute_query(db_connection=db_connection, query=neighborhood_update_query, query_params=(neighborhood_name, id,))
 
         return redirect('/neighborhoods')
 
+
+# Route to delete Neighborhoods
 @app.route('/delete_neighborhoods/<int:id>')
 def delete_neighborhoods(id):
     # Delete the Neighborhood with the specified id
@@ -426,7 +493,10 @@ def item_categories():
     
     # Retrieve the Item Categories data for display
     if request.method == "GET":
-        item_categories_get_query = 'SELECT categoryID AS "Category ID", categoryName AS "Category Name" FROM ItemCategories;'
+        item_categories_get_query = ('SELECT '
+                                        'categoryID AS "Category ID", '
+                                        'categoryName AS "Category Name" '
+                                    'FROM ItemCategories;')
         with connect() as db_connection:
             cursor = db.execute_query(db_connection=db_connection, query=item_categories_get_query)
             query_results = cursor.fetchall()
@@ -440,7 +510,11 @@ def edit_item_categories(id):
     
     # Get data for the Item Category with the specified id
     if request.method == "GET":
-        item_category_get_query = 'SELECT categoryID AS "Category ID", categoryName AS "Category Name" FROM ItemCategories WHERE categoryID = %s;'
+        item_category_get_query = ('SELECT '
+                                        'categoryID AS "Category ID", '
+                                        'categoryName AS "Category Name" '
+                                    'FROM ItemCategories '
+                                    'WHERE categoryID = %s;')
         with connect() as db_connection:
             cursor = db.execute_query(db_connection=db_connection, query=item_category_get_query, query_params=(id, ))
             query_results = cursor.fetchall()
@@ -453,7 +527,9 @@ def edit_item_categories(id):
         category_name = request.form["category_name"]
         
         # Execute the query to update the Item Category
-        item_category_update_query = 'UPDATE ItemCategories SET categoryName = %s WHERE categoryID = %s;'
+        item_category_update_query = ('UPDATE ItemCategories '
+                                        'SET categoryName = %s '
+                                        'WHERE categoryID = %s;')
         with connect() as db_connection:
             db.execute_query(db_connection=db_connection, query=item_category_update_query, query_params=(category_name, id, ))
     
