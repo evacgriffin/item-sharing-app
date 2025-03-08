@@ -22,17 +22,16 @@ Retrieved on: 02/09/2025
 URL: http://www.w3schools.com/tags/tag_form.asp
 #}
 
-{# Neighborhoods Page #}
+{# Item Categories Page #}
 
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Neighborhoods</h1>
+    <h1>Neighborhoods</h1>
     <table>
         <caption>Neighborhood Data</caption>
         <tr>
             <th>
-                <button type="button">New</button>
             </th>
             <th></th>
             {% for key in neighborhoods[0].keys()%}
@@ -42,10 +41,10 @@ URL: http://www.w3schools.com/tags/tag_form.asp
         {% for neighborhood in neighborhoods %}
         <tr>
             <td>
-                <button type="button">Edit</button>
+                <a href="/edit_neighborhoods/{{neighborhood['Neighborhood ID']}}">Edit</a>
             </td>
             <td>
-                <button type="button">Delete</button>
+                <a href="/delete_neighborhoods/{{neighborhood['Neighborhood ID']}}">Delete</a>
             </td>
             {% for key in neighborhood.keys() %}
             <td>{{neighborhood[key]}}</td>
@@ -56,32 +55,10 @@ URL: http://www.w3schools.com/tags/tag_form.asp
 
     <div id="form">
         <h2>Add New Neighborhood</h2>
-        <form>
+        <form method="post">
             <label>Neighborhood Name:</label>
-            <input type="text"><br><br>
-            <input type="submit" value="Submit">
-            <button type="button">Cancel</button>
-        </form>
-    </div>
-
-    <div id="form">
-        <h2>Edit Neighborhood</h2>
-        <form>
-            <p>Neighborhood ID: 1</p>
-            <label>Neighborhood Name:</label>
-            <input type="option" placeholder="Belltown"><br><br>
-            <input type="submit" value="Submit">
-            <button type="button">Cancel</button>
-        </form>
-    </div>
-
-    <div id="form">
-        <h2>Delete Neighborhood</h2>
-        <form>
-            <p>Are you sure you wish to delete the following item neighborhood?</p>
-            <p>Neighborhood ID: 1</p>
-            <p>Neighborhood Name: Belltown</p>
-            <input type="submit" value="Delete Neighborhood">
+            <input type="text" id="neighborhood_name" name="neighborhood_name"><br><br>
+            <input type="submit" value="Submit" name="add_neighborhood">
             <button type="button">Cancel</button>
         </form>
     </div>

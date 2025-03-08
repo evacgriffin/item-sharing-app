@@ -195,18 +195,64 @@ def transfer_items():
             items_query_results = items_cursor.fetchall()
             transfers_query_results = transfers_cursor.fetchall()
             return render_template("transfer_items.j2", transfer_items=transfer_items_query_results, items=items_query_results, transfers=transfers_query_results)
-        
 
-@app.route('/neighborhoods', methods=["GET"])
+
+@app.route('/neighborhoods', methods=["POST", "GET"])
 def neighborhoods():
-    # Get the Neighborhoods data for display
+    # Create a new Neighborhood
+    if request.method == "POST":
+        if request.form.get("add_neighborhood"):
+            # Get user form inputs
+            neighborhood_name = request.form["neighborhood_name"]
+            neighborhood_add_query = 'INSERT INTO Neighborhoods (neighborhoodName) VALUES (%s);'
+            with connect() as db_connection:
+                db.execute_query(db_connection=db_connection, query=neighborhood_add_query, query_params=(neighborhood_name,))
+
+        return redirect('/neighborhoods')
+
+    # Retrieve the Neighborhood data for display
     if request.method == "GET":
         neighborhoods_get_query = 'SELECT neighborhoodID AS "Neighborhood ID", neighborhoodName AS "Neighborhood Name" FROM Neighborhoods;'
         with connect() as db_connection:
             cursor = db.execute_query(db_connection=db_connection, query=neighborhoods_get_query)
             query_results = cursor.fetchall()
             return render_template("neighborhoods.j2", neighborhoods=query_results)
-        
+
+
+# Route for updating the selected Neighborhood
+@app.route('/edit_neighborhoods/<int:id>', methods=["POST", "GET"])
+def edit_neighborhoods(id):
+    print(f"Received request for id: {id}")
+
+    # Get data for the Neighborhood with the specified id
+    if request.method == "GET":
+        neighborhood_get_query = 'SELECT neighborhoodID AS "Neighborhood ID", neighborhoodName AS "Neighborhood Name" FROM Neighborhoods WHERE neighborhoodID = %s;'
+        with connect() as db_connection:
+            cursor = db.execute_query(db_connection=db_connection, query=neighborhood_get_query, query_params=(id,))
+            query_results = cursor.fetchall()
+            print(f"Query results: {query_results}")
+            return render_template("edit_neighborhoods.j2", neighborhood=query_results)
+
+    # Update the Neighborhood with the specified id
+    if request.method == "POST":
+        # Get form input
+        neighborhood_name = request.form["neighborhood_name"]
+
+        # Execute the query to update the Neighborhood
+        neighborhood_update_query = 'UPDATE Neighborhoods SET neighborhoodName = %s WHERE neighborhoodID = %s;'
+        with connect() as db_connection:
+            db.execute_query(db_connection=db_connection, query=neighborhood_update_query, query_params=(neighborhood_name, id,))
+
+        return redirect('/neighborhoods')
+
+@app.route('/delete_neighborhoods/<int:id>')
+def delete_neighborhoods(id):
+    # Delete the Neighborhood with the specified id
+    neighborhoods_delete_query = 'DELETE FROM Neighborhoods WHERE neighborhoodID = %s;'
+    with connect() as db_connection:
+        db.execute_query(db_connection=db_connection, query=neighborhoods_delete_query, query_params=(id,))
+
+    return redirect('/neighborhoods')
 
 @app.route('/item_categories', methods=["POST", "GET"])
 def item_categories():
