@@ -286,6 +286,17 @@ def edit_transfers(id):
             db.execute_query(db_connection=db_connection, query=transfer_update_query, query_params=(transfer_date_time, lending_user_id, borrowing_user_id, id,))
 
         return redirect('/transfers')
+    
+
+# Route for deleting the selected Transfer
+@app.route('/delete_transfers/<int:id>')
+def delete_transfers(id):
+    # Delete the Transfer with the specified id
+    transfers_delete_query = 'DELETE FROM Transfers WHERE transferID = %s;'
+    with connect() as db_connection:
+        db.execute_query(db_connection=db_connection, query=transfers_delete_query, query_params=(id, ))
+    
+    return redirect('/transfers')
 
 
 @app.route('/transfer_items', methods=["POST", "GET"])
