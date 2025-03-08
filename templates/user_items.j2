@@ -20,6 +20,10 @@ URL: http://www.w3schools.com/tags/tag_button.asp
 W3 Schools: HTML <form> Tag
 Retrieved on: 02/09/2025
 URL: http://www.w3schools.com/tags/tag_form.asp
+
+W3 Schools: HTML <select> Tag
+Retrieved on: 03/04/2025
+URL: http://www.w3schools.com/tags/tag_form.asp
 #}
 
 {# User Items Page #}
@@ -32,7 +36,6 @@ URL: http://www.w3schools.com/tags/tag_form.asp
         <caption>User Item Data</caption>
         <tr>
             <th>
-                <button type="button">New</button>
             </th>
             <th></th>
             {% for key in user_items[0].keys()%}
@@ -42,10 +45,15 @@ URL: http://www.w3schools.com/tags/tag_form.asp
         {% for user_item in user_items %}
         <tr>
             <td>
-                <button type="button">Edit</button>
+{#
+Template Designer Documentation - List of Control Structures - For - loop.index0
+Retrieved on: 03/08/2025
+URL: https://jinja.palletsprojects.com/en/stable/templates/#for
+#}
+                <a href="/edit_user_items/{{ids[loop.index0]['userID']}}-{{ids[loop.index0]['itemID']}}">Edit</a>
             </td>
             <td>
-                <button type="button">Delete</button>
+                <a href="/delete_user_items/{{ids[loop.index0]['userID']}}-{{ids[loop.index0]['itemID']}}">Delete</a>
             </td>
             {% for key in user_item.keys() %}
             <td>{{user_item[key]}}</td>
@@ -56,38 +64,20 @@ URL: http://www.w3schools.com/tags/tag_form.asp
 
     <div id="form">
         <h2>Add New User Item</h2>
-        <form>
+        <form method="post">
             <label>Username:</label>
-            <input type="option"><br><br>
+            <select id="user_name" name="user_name"><br><br>
+                {% for user in users %}
+                    <option value="{{user['userName']}}">{{user['userName']}}</option>
+                {% endfor %}
+            </select>
             <label>Item Name:</label>
-            <input type="option"><br><br>
-            <input type="submit" value="Submit">
-            <button type="button">Cancel</button>
-        </form>
-    </div>
-
-    <div id="form">
-        <h2>Edit User Item</h2>
-        <form>
-            <p>User ID: 1</p>
-            <label>Username:</label>
-            <input type="option" placeholder="katie775"><br><br>
-            <label>Item Name:</label>
-            <input type="option" placeholder="beanie"><br><br>
-            <input type="submit" value="Submit">
-            <button type="button">Cancel</button>
-        </form>
-    </div>
-
-    <div id="form">
-        <h2>Delete User Item</h2>
-        <form>
-            <p>Are you sure you wish to delete the following user item?</p>
-            <p>User ID: 1</p>
-            <p>User Name: katie775</p>
-            <p>Item ID: 5</p>
-            <p>Item Name: beanie</p>
-            <input type="submit" value="Delete User">
+            <select id="item_name" name="item_name"><br><br>
+                {% for item in items %}
+                    <option value="{{item['itemName']}}">{{item['itemName']}}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Submit" name="add_user_item">
             <button type="button">Cancel</button>
         </form>
     </div>
