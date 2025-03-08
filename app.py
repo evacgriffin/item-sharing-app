@@ -246,14 +246,27 @@ def transfer_items():
         transfer_items_get_query = 'SELECT TransferItems.transferItemID AS "Transfer Item ID", Items.itemName AS "Item Name", Transfers.transferID AS "Transfer ID", TransferItems.quantity AS Quantity, TransferItems.milliliters AS Milliliters, TransferItems.pounds AS Pounds FROM TransferItems JOIN Items ON Items.itemID = TransferItems.itemID JOIN Transfers ON Transfers.transferID = TransferItems.transferID ORDER BY TransferItems.transferItemID;'
         items_get_query = 'SELECT itemName FROM Items;'
         transfers_get_query = 'SELECT transferID FROM Transfers'
+        ids_get_query = 'SELECT transferID, itemID FROM TransferItems;'
         with connect() as db_connection:
             transfer_items_cursor = db.execute_query(db_connection=db_connection, query=transfer_items_get_query)
             items_cursor = db.execute_query(db_connection=db_connection, query=items_get_query)
             transfers_cursor = db.execute_query(db_connection=db_connection, query=transfers_get_query)
+            ids_cursor = db.execute_query(db_connection=db_connection, query=ids_get_query)
             transfer_items_query_results = transfer_items_cursor.fetchall()
             items_query_results = items_cursor.fetchall()
             transfers_query_results = transfers_cursor.fetchall()
-            return render_template("transfer_items.j2", transfer_items=transfer_items_query_results, items=items_query_results, transfers=transfers_query_results)
+            ids_query_results = ids_cursor.fetchall()
+            return render_template("transfer_items.j2", transfer_items=transfer_items_query_results, items=items_query_results, transfers=transfers_query_results, ids=ids_query_results)
+
+
+@app.route('/delete_transfer_items/<int:transfer_id>-<int:item_id>')
+def delete_transfer_items(transfer_id, item_id):
+    # Delete the Transfer Item with the specified transferID and itemID
+    transfer_items_delete_query = 'DELETE FROM TransferItems WHERE transferID = %s AND itemID = %s;'
+    with connect() as db_connection:
+        db.execute_query(db_connection=db_connection, query=transfer_items_delete_query, query_params=(transfer_id, item_id))
+
+    return redirect('/transfer_items')
 
 
 @app.route('/neighborhoods', methods=["POST", "GET"])
