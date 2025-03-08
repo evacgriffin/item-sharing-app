@@ -84,10 +84,10 @@ def edit_items(id):
 
     # Get data for the Item with the specified id
     if request.method == "GET":
-        items_get_query = 'SELECT Items.itemID AS "Item ID", Items.itemName AS "Item Name", ItemCategories.categoryName AS "Category Name" FROM Items JOIN ItemCategories ON Items.categoryID = ItemCategories.categoryID WHERE itemID = %s;'
+        item_get_query = 'SELECT Items.itemID AS "Item ID", Items.itemName AS "Item Name", ItemCategories.categoryName AS "Category Name" FROM Items JOIN ItemCategories ON Items.categoryID = ItemCategories.categoryID WHERE itemID = %s;'
         categories_get_query = 'SELECT categoryName FROM ItemCategories;'
         with connect() as db_connection:
-            item_cursor = db.execute_query(db_connection=db_connection, query=items_get_query, query_params=(id,))
+            item_cursor = db.execute_query(db_connection=db_connection, query=item_get_query, query_params=(id,))
             categories_cursor = db.execute_query(db_connection=db_connection, query=categories_get_query)
             item_query_results = item_cursor.fetchall()
             categories_query_results = categories_cursor.fetchall()
@@ -117,17 +117,76 @@ def delete_items(id):
 
     return redirect('/items')
 
-
-@app.route('/user_items', methods=["GET"])
+@app.route('/user_items', methods=["POST", "GET"])
 def user_items():
+    # Create a new User Item
+    if request.method == "POST":
+        if request.form.get("add_user_item"):
+            # Get user form inputs
+            item_name = request.form["item_name"]
+            user_name = request.form["user_name"]
+            user_item_add_query = 'INSERT INTO UserItems (userID, itemID) VALUES ((SELECT userID FROM Users WHERE userName = %s), (SELECT itemID FROM Items WHERE itemName = %s));'
+            print(user_item_add_query)
+            with connect() as db_connection:
+                db.execute_query(db_connection=db_connection, query=user_item_add_query, query_params=(user_name, item_name, ))
+
+        return redirect('/user_items')
+
     # Get the User Items data for display
     if request.method == "GET":
-        user_items_get_query = 'SELECT userID AS "User ID", itemID AS "Item ID" FROM UserItems;'
+        user_items_get_query = 'SELECT Users.userName AS "Username", Items.itemName AS "Item Name" FROM UserItems JOIN Users ON Users.UserID = UserItems.UserID JOIN Items ON Items.itemID = UserItems.itemID;'
+        users_get_query = 'SELECT userName FROM Users;'
+        items_get_query = 'SELECT itemName FROM Items;'
+        ids_get_query = 'SELECT userID, itemID FROM UserItems;'
         with connect() as db_connection:
-            cursor = db.execute_query(db_connection=db_connection, query=user_items_get_query)
-            query_results = cursor.fetchall()
-            return render_template("user_items.j2", user_items=query_results)
+            user_items_cursor = db.execute_query(db_connection=db_connection, query=user_items_get_query)
+            users_cursor = db.execute_query(db_connection=db_connection, query=users_get_query)
+            items_cursor = db.execute_query(db_connection=db_connection, query=items_get_query)
+            ids_cursor = db.execute_query(db_connection=db_connection, query=ids_get_query)
+            ids_query_results = ids_cursor.fetchall()
+            user_items_query_results = user_items_cursor.fetchall()
+            users_query_results = users_cursor.fetchall()
+            items_query_results = items_cursor.fetchall()
+            return render_template("user_items.j2", user_items=user_items_query_results, users=users_query_results, items=items_query_results, ids=ids_query_results)
+@app.route('/edit_user_items/<int:user_id>-<int:item_id>', methods=["POST", "GET"])
+def edit_user_items(user_id, item_id):
+    print(f"Received request for ids: {user_id}, {item_id}")
 
+    # Get data for the User Item with the specified id
+    if request.method == "GET":
+        user_item_get_query = 'SELECT Users.userName AS "Username", Items.itemName AS "Item Name" FROM UserItems JOIN Users ON Users.UserID = UserItems.UserID JOIN Items ON Items.itemID = UserItems.itemID WHERE userID = %s AND itemID = %s;'
+        users_get_query = 'SELECT userName FROM Users;'
+        items_get_query = 'SELECT itemName FROM Items;'
+        with connect() as db_connection:
+            user_item_cursor = db.execute_query(db_connection=db_connection, query=user_item_get_query, query_params=(user_id, item_id))
+            users_cursor = db.execute_query(db_connection=db_connection, query=users_get_query)
+            items_cursor = db.execute_query(db_connection=db_connection, query=items_get_query)
+            user_item_query_results = user_item_cursor.fetchall()
+            users_query_results = users_cursor.fetchall()
+            items_query_results = items_cursor.fetchall()
+            print(f"Query results: {user_item_query_results}")
+            return render_template("edit_user_items.j2", user_item=user_item_query_results, users=users_query_results, items=items_query_results)
+
+    # Update the User Item with the specified ids
+    if request.method == "POST":
+        # Get form input
+        item_name = request.form["item_name"]
+        user_name = request.form["category_name"]
+        # Execute the query to update the Item
+        item_update_query = 'UPDATE UserItems SET itemID = (SELECT itemID from Items WHERE itemName = %s), userID = (SELECT userID FROM Users WHERE userName = %s);'
+        with connect() as db_connection:
+            db.execute_query(db_connection=db_connection, query=item_update_query, query_params=(item_name, user_name,))
+
+        return redirect('/user_items')
+
+@app.route('/delete_user_items/<int:user_id>-<int:item_id>')
+def delete_user_items(user_id, item_id):
+    # Delete the User Item with the specified ids
+    user_items_delete_query = 'DELETE FROM UserItems WHERE userID = %s AND itemID = %s;'
+    with connect() as db_connection:
+        db.execute_query(db_connection=db_connection, query=user_items_delete_query, query_params=(user_id, item_id))
+
+    return redirect('/user_items')
 
 @app.route('/transfers', methods=["POST", "GET"])
 def transfers():
