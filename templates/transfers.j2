@@ -44,7 +44,7 @@ URL: http://www.w3schools.com/tags/tag_form.asp
                 <a href="/edit_transfers/{{transfer['Transfer ID']}}">Edit</a>
             </td>
             <td>
-                <a>Delete</a>
+                <a href="/delete_transfers/{{transfer['Transfer ID']}}">Delete</a>
             </td>
             {% for key in transfer.keys() %}
             <td>{{transfer[key]}}</td>
