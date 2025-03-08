@@ -42,7 +42,7 @@ URL: http://www.w3schools.com/tags/tag_form.asp
         {% for transfer_item in transfer_items %}
         <tr>
             <td>
-                <button type="button">Edit</button>
+                <a>Edit</a>
             </td>
             <td>
                 <a href="/delete_transfer_items/{{ids[loop.index0]['transferID']}}-{{ids[loop.index0]['itemID']}}">Delete</a>
