@@ -197,7 +197,10 @@ def transfers():
             transfer_date_time = request.form["transfer_date_time"]
             lending_user_name = request.form["lending_user_name"]
             borrowing_user_name = request.form["borrowing_user_name"]
-            transfer_add_query = 'INSERT INTO Transfers (transferDateTime, lendingUserID, borrowingUserID) VALUES (%s, (SELECT userID FROM Users WHERE userName = %s), (SELECT userID FROM Users WHERE userName = %s));'
+            transfer_add_query = ('INSERT INTO Transfers '
+                                    '(transferDateTime, lendingUserID, borrowingUserID) '
+                                'VALUES '
+                                    '(%s, (SELECT userID FROM Users WHERE userName = %s), (SELECT userID FROM Users WHERE userName = %s));')
             with connect() as db_connection:
                 db.execute_query(db_connection=db_connection, query=transfer_add_query, query_params=(transfer_date_time, lending_user_name, borrowing_user_name, ))
 
@@ -211,7 +214,14 @@ def transfers():
         # Author: Marija Ilic
         # Retrieved On: 03/06/2025
         # URL: https://learnsql.com/blog/how-to-join-same-table-twice/
-        transfers_get_query = 'SELECT TransferUsers.transferID AS "Transfer ID", TransferUsers.transferDateTime AS "Transfer Date and Time", LendingUsers.userName AS "Lending User", BorrowingUsers.userName AS "Borrowing User" FROM Transfers AS TransferUsers JOIN Users AS LendingUsers ON LendingUsers.userID = TransferUsers.lendingUserID JOIN Users AS BorrowingUsers ON BorrowingUsers.userID = TransferUsers.borrowingUserID;'
+        transfers_get_query = ('SELECT '
+                                    'TransferUsers.transferID AS "Transfer ID", '
+                                    'TransferUsers.transferDateTime AS "Transfer Date and Time", '
+                                    'LendingUsers.userName AS "Lending User", BorrowingUsers.userName AS "Borrowing User" '
+                                'FROM Transfers AS TransferUsers '
+                                'JOIN Users AS LendingUsers ON LendingUsers.userID = TransferUsers.lendingUserID '
+                                'JOIN Users AS BorrowingUsers ON BorrowingUsers.userID = TransferUsers.borrowingUserID '
+                                'ORDER BY TransferUsers.transferID;')
         lending_users_get_query = 'SELECT userName AS lendingUserName FROM Users;'
         borrowing_users_get_query = 'SELECT userName AS borrowingUserName FROM Users;'
         with connect() as db_connection:
@@ -222,6 +232,60 @@ def transfers():
             lending_users_query_results = lending_users_cursor.fetchall()
             borrowing_users_query_results = borrowing_users_cursor.fetchall()
             return render_template("transfers.j2", transfers=transfers_query_results, lending_users=lending_users_query_results, borrowing_users=borrowing_users_query_results)
+        
+
+# Route for updating the selected Transfer
+@app.route('/edit_transfers/<int:id>', methods=["POST", "GET"])
+def edit_transfers(id):
+    print(f"Received request for id: {id}")
+
+    # Get data for the Transfer with the specified id
+    if request.method == "GET":
+        transfer_get_query = ('SELECT '
+                                    'TransferUsers.transferID AS "Transfer ID", '
+                                    'TransferUsers.transferDateTime AS "Transfer Date and Time", '
+                                    'TransferUsers.borrowingUserID, '
+                                    'TransferUsers.lendingUserID '
+                                'FROM Transfers AS TransferUsers '
+                                'JOIN Users AS LendingUsers ON LendingUsers.userID = TransferUsers.lendingUserID '
+                                'JOIN Users AS BorrowingUsers ON BorrowingUsers.userID = TransferUsers.borrowingUserID '
+                                'WHERE TransferUsers.transferID = %s;')
+        lending_users_get_query = 'SELECT userName AS lendingUserName FROM Users;'
+        borrowing_users_get_query = 'SELECT userName AS borrowingUserName FROM Users;'
+        with connect() as db_connection:
+            transfer_cursor = db.execute_query(db_connection=db_connection, query=transfer_get_query, query_params=(id, ))
+            lending_users_cursor = db.execute_query(db_connection=db_connection, query=lending_users_get_query)
+            borrowing_users_cursor = db.execute_query(db_connection=db_connection, query=borrowing_users_get_query)
+            transfer_query_results = transfer_cursor.fetchall()
+            print(f"Transfer Query Results: {transfer_query_results}")
+            lending_users_query_results = lending_users_cursor.fetchall()
+            borrowing_users_query_results = borrowing_users_cursor.fetchall()
+            return render_template("edit_transfers.j2", transfer=transfer_query_results, lending_users=lending_users_query_results, borrowing_users=borrowing_users_query_results)
+
+    # Update the Transfer with the specified id
+    if request.method == "POST":
+        # Get form input
+        transfer_date_time = request.form["transfer_date_time"]
+        lending_user_name = request.form["lending_user_name"]
+        borrowing_user_name = request.form["borrowing_user_name"]
+
+        # Execute queries to get the userIDs
+        with connect() as db_connection:
+            lending_user_id_query = 'SELECT userID FROM Users WHERE userName = %s'
+            borrowing_user_id_query = 'SELECT userID FROM Users WHERE userName = %s'
+            lending_user_id_cursor = db.execute_query(db_connection=db_connection, query=lending_user_id_query, query_params=(lending_user_name, ))
+            borrowing_user_id_cursor = db.execute_query(db_connection=db_connection, query=borrowing_user_id_query, query_params=(borrowing_user_name, ))
+            lending_user_id = lending_user_id_cursor.fetchall()[0]['userID']
+            borrowing_user_id = borrowing_user_id_cursor.fetchall()[0]['userID']
+
+        # Execute the query to update the Transfer
+        transfer_update_query = ('UPDATE Transfers '
+                                    'SET transferDateTime = %s, lendingUserID = %s, borrowingUserID = %s '
+                                    'WHERE transferID = %s;')
+        with connect() as db_connection:
+            db.execute_query(db_connection=db_connection, query=transfer_update_query, query_params=(transfer_date_time, lending_user_id, borrowing_user_id, id,))
+
+        return redirect('/transfers')
 
 
 @app.route('/transfer_items', methods=["POST", "GET"])
@@ -243,7 +307,17 @@ def transfer_items():
     
     # Get the Transfer Items data for display
     if request.method == "GET":
-        transfer_items_get_query = 'SELECT TransferItems.transferItemID AS "Transfer Item ID", Items.itemName AS "Item Name", Transfers.transferID AS "Transfer ID", TransferItems.quantity AS Quantity, TransferItems.milliliters AS Milliliters, TransferItems.pounds AS Pounds FROM TransferItems JOIN Items ON Items.itemID = TransferItems.itemID JOIN Transfers ON Transfers.transferID = TransferItems.transferID ORDER BY TransferItems.transferItemID;'
+        transfer_items_get_query = ('SELECT '
+                                        'TransferItems.transferItemID AS "Transfer Item ID", '
+                                        'Items.itemName AS "Item Name", '
+                                        'Transfers.transferID AS "Transfer ID", '
+                                        'TransferItems.quantity AS Quantity, '
+                                        'TransferItems.milliliters AS Milliliters, '
+                                        'TransferItems.pounds AS Pounds '
+                                    'FROM TransferItems '
+                                    'JOIN Items ON Items.itemID = TransferItems.itemID '
+                                    'JOIN Transfers ON Transfers.transferID = TransferItems.transferID '
+                                    'ORDER BY TransferItems.transferItemID;')
         items_get_query = 'SELECT itemName FROM Items;'
         transfers_get_query = 'SELECT transferID FROM Transfers'
         ids_get_query = 'SELECT transferID, itemID FROM TransferItems;'

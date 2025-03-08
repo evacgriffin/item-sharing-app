@@ -41,10 +41,10 @@ URL: http://www.w3schools.com/tags/tag_form.asp
         {% for transfer in transfers %}
         <tr>
             <td>
-                <button type="button">Edit</button>
+                <a href="/edit_transfers/{{transfer['Transfer ID']}}">Edit</a>
             </td>
             <td>
-                <button type="button">Delete</button>
+                <a>Delete</a>
             </td>
             {% for key in transfer.keys() %}
             <td>{{transfer[key]}}</td>
