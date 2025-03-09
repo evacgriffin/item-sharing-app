@@ -196,32 +196,38 @@ def edit_user_items(user_id, item_id):
                                 'FROM UserItems '
                                 'JOIN Users ON Users.UserID = UserItems.UserID '
                                 'JOIN Items ON Items.itemID = UserItems.itemID '
-                                'WHERE userID = %s AND itemID = %s;')
+                                'WHERE UserItems.userID = %s AND UserItems.itemID = %s '
+                               'LIMIT 1;')
         users_get_query = 'SELECT userName FROM Users;'
         items_get_query = 'SELECT itemName FROM Items;'
+        ids_get_query = ('SELECT userID, itemID FROM UserItems WHERE userID = %s AND itemID = %s;')
 
         with connect() as db_connection:
-            user_item_cursor = db.execute_query(db_connection=db_connection, query=user_item_get_query, query_params=(user_id, item_id))
+            user_item_cursor = db.execute_query(db_connection=db_connection, query=user_item_get_query, query_params=(user_id, item_id, ))
             users_cursor = db.execute_query(db_connection=db_connection, query=users_get_query)
             items_cursor = db.execute_query(db_connection=db_connection, query=items_get_query)
+            ids_cursor = db.execute_query(db_connection=db_connection, query=ids_get_query, query_params=(user_id, item_id, ))
+            ids_query_results = ids_cursor.fetchall()
             user_item_query_results = user_item_cursor.fetchall()
             users_query_results = users_cursor.fetchall()
             items_query_results = items_cursor.fetchall()
             print(f"Query results: {user_item_query_results}")
-            return render_template("edit_user_items.j2", user_item=user_item_query_results, users=users_query_results, items=items_query_results)
+            return render_template("edit_user_items.j2", user_item=user_item_query_results, users=users_query_results, items=items_query_results, ids=ids_query_results)
 
     # Update the User Item with the specified ids
     if request.method == "POST":
         # Get form input
         item_name = request.form["item_name"]
-        user_name = request.form["category_name"]
+        user_name = request.form["user_name"]
         # Execute the query to update the Item
-        item_update_query = ('UPDATE UserItems '
+        user_item_update_query = ('UPDATE UserItems '
                                 'SET '
                                     'itemID = (SELECT itemID from Items WHERE itemName = %s), '
-                                    'userID = (SELECT userID FROM Users WHERE userName = %s);')
+                                    'userID = (SELECT userID FROM Users WHERE userName = %s) '
+                                  'WHERE userID = %s AND itemID = %s '
+                                  'LIMIT 1;')
         with connect() as db_connection:
-            db.execute_query(db_connection=db_connection, query=item_update_query, query_params=(item_name, user_name,))
+            db.execute_query(db_connection=db_connection, query=user_item_update_query, query_params=(item_name, user_name, user_id, item_id))
 
         return redirect('/user_items')
 
@@ -231,7 +237,8 @@ def edit_user_items(user_id, item_id):
 def delete_user_items(user_id, item_id):
     # Delete the User Item with the specified ids
     user_items_delete_query = ('DELETE FROM UserItems '
-                                    'WHERE userID = %s AND itemID = %s;')
+                                    'WHERE userID = %s AND itemID = %s '
+                               'LIMIT 1;')
     with connect() as db_connection:
         db.execute_query(db_connection=db_connection, query=user_items_delete_query, query_params=(user_id, item_id))
 
