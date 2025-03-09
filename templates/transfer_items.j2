@@ -32,7 +32,6 @@ URL: http://www.w3schools.com/tags/tag_form.asp
         <caption>Transfer Item Data</caption>
         <tr>
             <th>
-                <button type="button">New</button>
             </th>
             <th></th>
             {% for key in transfer_items[0].keys()%}
@@ -42,7 +41,7 @@ URL: http://www.w3schools.com/tags/tag_form.asp
         {% for transfer_item in transfer_items %}
         <tr>
             <td>
-                <a>Edit</a>
+                <a href="/edit_transfer_items/{{transfer_item['Transfer Item ID']}}">Edit</a>
             </td>
             <td>
                 <a href="/delete_transfer_items/{{ids[loop.index0]['transferID']}}-{{ids[loop.index0]['itemID']}}">Delete</a>
