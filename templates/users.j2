@@ -20,6 +20,10 @@ URL: http://www.w3schools.com/tags/tag_button.asp
 W3 Schools: HTML <form> Tag
 Retrieved on: 02/09/2025
 URL: http://www.w3schools.com/tags/tag_form.asp
+
+W3 Schools: HTML <select> Tag
+Retrieved on: 03/04/2025
+URL: http://www.w3schools.com/tags/tag_form.asp
 #}
 
 {# Users Page #}
@@ -32,7 +36,6 @@ URL: http://www.w3schools.com/tags/tag_form.asp
         <caption>User Data</caption>
         <tr>
             <th>
-                <button type="button">New</button>
             </th>
             <th></th>
             {% for key in users[0].keys()%}
@@ -42,10 +45,10 @@ URL: http://www.w3schools.com/tags/tag_form.asp
         {% for user in users %}
         <tr>
             <td>
-                <button type="button">Edit</button>
+                <a href="/edit_users/{{user['User ID']}}">Edit</a>
             </td>
             <td>
-                <button type="button">Delete</button>
+                <a href="/delete_users/{{user['User ID']}}">Delete</a>
             </td>
             {% for key in user.keys() %}
             <td>{{user[key]}}</td>
@@ -56,47 +59,21 @@ URL: http://www.w3schools.com/tags/tag_form.asp
 
     <div id="form">
         <h2>Add New User</h2>
-        <form>
+        <form method="post">
             <label>Username:</label>
-            <input type="option"><br><br>
+            <input type="text" id="user_name" name="user_name"><br><br>
             <label>Password:</label>
-            <input type="option"><br><br>
+            <input type="text" id="password" name="password"><br><br>
             <label>Email:</label>
-            <input type="option"><br><br>
-            <label>Neighborhood Name:</label>
-            <input type="option"><br><br>
-            <input type="submit" value="Submit">
-            <button type="button">Cancel</button>
-        </form>
-    </div>
-
-    <div id="form">
-        <h2>Edit User</h2>
-        <form>
-            <p>User ID: 1</p>
-            <label>Username:</label>
-            <input type="option" placeholder="katie775"><br><br>
-            <label>Password:</label>
-            <input type="option" placeholder="example_pw_1"><br><br>
-            <label>Email:</label>
-            <input type="option" placeholder="katie775@gmail.com"><br><br>
-            <label>Neighborhood Name:</label>
-            <input type="option" placeholder="Waterfront"><br><br>
-            <input type="submit" value="Submit">
-            <button type="button">Cancel</button>
-        </form>
-    </div>
-
-    <div id="form">
-        <h2>Delete User</h2>
-        <form>
-            <p>Are you sure you wish to delete the following user?</p>
-            <p>User ID: 1</p>
-            <p>Username: katie775</p>
-            <p>Password: example_pw_1</p>
-            <p>Email: katie775@gmail.com</p>
-            <p>Neighborhood Name: Waterfront</p>
-            <input type="submit" value="Delete User">
+            <input type="text" id="email" name="email"><br><br>
+            <label>Neighborhood:</label>
+            <select id="neighborhood" name="neighborhood"><br><br>
+                {% for neighborhood in neighborhoods %}
+                    <option value="{{neighborhood['neighborhoodName']}}">{{neighborhood['neighborhoodName']}}</option>
+                {% endfor %}
+                <option value="">None</option>
+            </select>
+            <input type="submit" value="Submit" name="add_user">
             <button type="button">Cancel</button>
         </form>
     </div>

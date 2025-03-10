@@ -39,23 +39,117 @@ def connect():
 def root():
     return render_template("main.j2")
 
-
-@app.route('/users', methods=["GET"])
+@app.route('/users', methods=["POST", "GET"])
 def users():
+    # Create a new User
+    if request.method == "POST":
+        if request.form.get("add_user"):
+            # Get user form inputs
+            user_name = request.form["user_name"]
+            password = request.form["password"]
+            email = request.form["email"]
+            if not request.form.get("neighborhood"):
+                user_add_query = ('INSERT INTO Users '
+                                    '(userName, password, email) '
+                                  'VALUES '
+                                    '(%s, %s, %s);')
+                query_params = (user_name, password, email, )
+            else:
+                neighborhood = request.form["neighborhood"]
+                user_add_query = ('INSERT INTO Users '
+                                    '(userName, password, email, neighborhoodID) '
+                                'VALUES '
+                                    '(%s, %s, %s, (SELECT neighborhoodID FROM Neighborhoods WHERE neighborhoodName = %s));')
+                query_params = (user_name, password, email, neighborhood, )
+            print(user_add_query)
+            with connect() as db_connection:
+                db.execute_query(db_connection=db_connection, query=user_add_query, query_params=query_params )
+
+        return redirect('/users')
+
     # Get the Users data for display
     if request.method == "GET":
         users_get_query = ('SELECT '
-                                'userID AS "User ID", '
-                                'username AS Username, '
-                                'password AS Password, '
-                                'email AS Email, '
-                                'neighborhoodID AS "Neighborhood ID" '
-                            'FROM Users;')
+                               'Users.userID AS "User ID", '
+                               'Users.username AS Username, '
+                               'Users.password AS Password, '
+                               'Users.email AS Email, '
+                               'Neighborhoods.neighborhoodName AS "Neighborhood" '
+                           'FROM Users '
+                           'LEFT JOIN Neighborhoods ON Users.neighborhoodID = Neighborhoods.neighborhoodID;')
+        neighborhoods_get_query = 'SELECT neighborhoodName FROM Neighborhoods;'
         with connect() as db_connection:
-            cursor = db.execute_query(db_connection=db_connection, query=users_get_query)
-            query_results = cursor.fetchall()
-            return render_template("users.j2", users=query_results)
+            users_cursor = db.execute_query(db_connection=db_connection, query=users_get_query)
+            neighborhoods_cursor = db.execute_query(db_connection=db_connection, query=neighborhoods_get_query)
+            users_query_results = users_cursor.fetchall()
+            neighborhoods_query_results = neighborhoods_cursor.fetchall()
+            return render_template("users.j2", users=users_query_results, neighborhoods=neighborhoods_query_results)
 
+# Route for updating the selected User
+@app.route('/edit_users/<int:id>', methods=["POST", "GET"])
+def edit_users(id):
+    print(f"Received request for id: {id}")
+
+    # Get data for the User with the specified id
+    if request.method == "GET":
+        user_get_query = ('SELECT '
+                               'Users.userID AS "User ID", '
+                               'Users.username AS Username, '
+                               'Users.password AS Password, '
+                               'Users.email AS Email, '
+                               'Neighborhoods.neighborhoodName AS "Neighborhood" '
+                            'FROM Users '
+                           'LEFT JOIN Neighborhoods ON Users.neighborhoodID = Neighborhoods.neighborhoodID '
+                            'WHERE userID = %s;')
+        neighborhoods_get_query = 'SELECT neighborhoodName FROM Neighborhoods;'
+        with connect() as db_connection:
+            user_cursor = db.execute_query(db_connection=db_connection, query=user_get_query, query_params=(id,))
+            neighborhoods_cursor = db.execute_query(db_connection=db_connection, query=neighborhoods_get_query)
+            user_query_results = user_cursor.fetchall()
+            neighborhoods_query_results = neighborhoods_cursor.fetchall()
+            print(f"Query results: {user_query_results}")
+            return render_template("edit_users.j2", user=user_query_results, neighborhoods=neighborhoods_query_results)
+
+    # Update the User with the specified id
+    if request.method == "POST":
+        # Get form input
+        user_name = request.form["user_name"]
+        password = request.form["password"]
+        email = request.form["email"]
+        if not request.form.get("neighborhood"):
+            query_params = (user_name, password, email, id,)
+            # Execute the query to update the User
+            user_update_query = ('UPDATE Users '
+                                    'SET '
+                                    'userName = %s, '
+                                    'password = %s, '
+                                    'email = %s, '                                 
+                                    'neighborhoodID = NULL '
+                                 'WHERE userID = %s;')
+        else:
+            neighborhood = request.form["neighborhood"]
+            query_params = (user_name, password, email, neighborhood, id,)
+            user_update_query = ('UPDATE Users '
+                                    'SET '
+                                    'userName = %s, '
+                                    'password = %s, '
+                                    'email = %s, '                                 
+                                    'neighborhoodID = (SELECT neighborhoodID FROM Neighborhoods WHERE neighborhoodName = %s) '
+                                 'WHERE userID = %s;')
+        with connect() as db_connection:
+            db.execute_query(db_connection=db_connection, query=user_update_query, query_params=query_params )
+
+        return redirect('/users')
+
+# Route for deleting the selected Item
+@app.route('/delete_users/<int:id>')
+def delete_users(id):
+    # Delete the Item with the specified id
+    users_delete_query = 'DELETE FROM Users WHERE userID = %s;'
+    with connect() as db_connection:
+        db.execute_query(db_connection=db_connection, query=users_delete_query, query_params=(id,))
+
+    return redirect('/users')
 
 @app.route('/items', methods=["POST", "GET"])
 def items():
@@ -196,32 +290,38 @@ def edit_user_items(user_id, item_id):
                                 'FROM UserItems '
                                 'JOIN Users ON Users.UserID = UserItems.UserID '
                                 'JOIN Items ON Items.itemID = UserItems.itemID '
-                                'WHERE userID = %s AND itemID = %s;')
+                                'WHERE UserItems.userID = %s AND UserItems.itemID = %s '
+                               'LIMIT 1;')
         users_get_query = 'SELECT userName FROM Users;'
         items_get_query = 'SELECT itemName FROM Items;'
+        ids_get_query = ('SELECT userID, itemID FROM UserItems WHERE userID = %s AND itemID = %s;')
 
         with connect() as db_connection:
-            user_item_cursor = db.execute_query(db_connection=db_connection, query=user_item_get_query, query_params=(user_id, item_id))
+            user_item_cursor = db.execute_query(db_connection=db_connection, query=user_item_get_query, query_params=(user_id, item_id, ))
             users_cursor = db.execute_query(db_connection=db_connection, query=users_get_query)
             items_cursor = db.execute_query(db_connection=db_connection, query=items_get_query)
+            ids_cursor = db.execute_query(db_connection=db_connection, query=ids_get_query, query_params=(user_id, item_id, ))
+            ids_query_results = ids_cursor.fetchall()
             user_item_query_results = user_item_cursor.fetchall()
             users_query_results = users_cursor.fetchall()
             items_query_results = items_cursor.fetchall()
             print(f"Query results: {user_item_query_results}")
-            return render_template("edit_user_items.j2", user_item=user_item_query_results, users=users_query_results, items=items_query_results)
+            return render_template("edit_user_items.j2", user_item=user_item_query_results, users=users_query_results, items=items_query_results, ids=ids_query_results)
 
     # Update the User Item with the specified ids
     if request.method == "POST":
         # Get form input
         item_name = request.form["item_name"]
-        user_name = request.form["category_name"]
+        user_name = request.form["user_name"]
         # Execute the query to update the Item
-        item_update_query = ('UPDATE UserItems '
+        user_item_update_query = ('UPDATE UserItems '
                                 'SET '
                                     'itemID = (SELECT itemID from Items WHERE itemName = %s), '
-                                    'userID = (SELECT userID FROM Users WHERE userName = %s);')
+                                    'userID = (SELECT userID FROM Users WHERE userName = %s) '
+                                  'WHERE userID = %s AND itemID = %s '
+                                  'LIMIT 1;')
         with connect() as db_connection:
-            db.execute_query(db_connection=db_connection, query=item_update_query, query_params=(item_name, user_name,))
+            db.execute_query(db_connection=db_connection, query=user_item_update_query, query_params=(item_name, user_name, user_id, item_id))
 
         return redirect('/user_items')
 
@@ -231,7 +331,8 @@ def edit_user_items(user_id, item_id):
 def delete_user_items(user_id, item_id):
     # Delete the User Item with the specified ids
     user_items_delete_query = ('DELETE FROM UserItems '
-                                    'WHERE userID = %s AND itemID = %s;')
+                                    'WHERE userID = %s AND itemID = %s '
+                               'LIMIT 1;')
     with connect() as db_connection:
         db.execute_query(db_connection=db_connection, query=user_items_delete_query, query_params=(user_id, item_id))
 
