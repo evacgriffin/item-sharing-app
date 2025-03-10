@@ -471,21 +471,32 @@ def transfer_items():
 
         return redirect('/transfer_items')
 
+
     # Get the Transfer Items data for display
     if request.method == "GET":
         transfer_items_get_query = ('SELECT '
                                         'TransferItems.transferItemID AS "Transfer Item ID", '
                                         'Items.itemName AS "Item Name", '
                                         'Transfers.transferID AS "Transfer ID", '
+                                        'LendingUsers.userName AS "Lending User", '
+                                        'BorrowingUsers.userName AS "Borrowing User", '
                                         'TransferItems.quantity AS Quantity, '
                                         'TransferItems.milliliters AS Milliliters, '
                                         'TransferItems.pounds AS Pounds '
                                     'FROM TransferItems '
                                     'JOIN Items ON Items.itemID = TransferItems.itemID '
                                     'JOIN Transfers ON Transfers.transferID = TransferItems.transferID '
+                                    'JOIN Users AS LendingUsers ON LendingUsers.userID = Transfers.lendingUserID '
+                                    'JOIN Users AS BorrowingUsers ON BorrowingUsers.userID = Transfers.borrowingUserID '
                                     'ORDER BY TransferItems.transferItemID;')
         items_get_query = 'SELECT itemName FROM Items;'
-        transfers_get_query = 'SELECT transferID FROM Transfers'
+        transfers_get_query = ('SELECT '
+                                    'Transfers.transferID, '
+                                    'LendingUsers.userName AS "Lending User", '
+                                    'BorrowingUsers.userName AS "Borrowing User" '
+                                'FROM Transfers '
+                                'JOIN Users AS LendingUsers ON LendingUsers.userID = Transfers.lendingUserID '
+                                'JOIN Users AS BorrowingUsers ON BorrowingUsers.userID = Transfers.borrowingUserID;')
         ids_get_query = 'SELECT transferID, itemID FROM TransferItems;'
         with connect() as db_connection:
             transfer_items_cursor = db.execute_query(db_connection=db_connection, query=transfer_items_get_query)
@@ -505,16 +516,28 @@ def edit_transfer_items(id):
     # Get data for the Transfer Item with the specified id
     if request.method == "GET":
         transfer_item_get_query = ('SELECT '
-                                        'transferItemID AS "Transfer Item ID", '
-                                        'itemID AS "Item ID", '
-                                        'transferID AS "Transfer ID", '
-                                        'quantity AS Quantity, '
-                                        'milliliters AS Milliliters, '
-                                        'pounds AS Pounds '
+                                        'TransferItems.transferItemID AS "Transfer Item ID", '
+                                        'Items.itemName AS "Item Name", '
+                                        'Transfers.transferID AS "Transfer ID", '
+                                        'LendingUsers.userName AS "Lending User", '
+                                        'BorrowingUsers.userName AS "Borrowing User", '
+                                        'TransferItems.quantity AS Quantity, '
+                                        'TransferItems.milliliters AS Milliliters, '
+                                        'TransferItems.pounds AS Pounds '
                                     'FROM TransferItems '
-                                    'WHERE transferItemID = %s;')
+                                    'JOIN Items ON Items.itemID = TransferItems.itemID '
+                                    'JOIN Transfers ON Transfers.transferID = TransferItems.transferID '
+                                    'JOIN Users AS LendingUsers ON LendingUsers.userID = Transfers.lendingUserID '
+                                    'JOIN Users AS BorrowingUsers ON BorrowingUsers.userID = Transfers.borrowingUserID '
+                                    'WHERE TransferItems.transferItemID = %s;')
         items_get_query = 'SELECT itemName FROM Items;'
-        transfers_get_query = 'SELECT transferID FROM Transfers;'
+        transfers_get_query = ('SELECT '
+                                    'Transfers.transferID, '
+                                    'LendingUsers.userName AS "Lending User", '
+                                    'BorrowingUsers.userName AS "Borrowing User" '
+                                'FROM Transfers '
+                                'JOIN Users AS LendingUsers ON LendingUsers.userID = Transfers.lendingUserID '
+                                'JOIN Users AS BorrowingUsers ON BorrowingUsers.userID = Transfers.borrowingUserID;')
 
         with connect() as db_connection:
             transfer_item_cursor = db.execute_query(db_connection=db_connection, query=transfer_item_get_query, query_params=(id, ))
