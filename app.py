@@ -39,23 +39,117 @@ def connect():
 def root():
     return render_template("main.j2")
 
-
-@app.route('/users', methods=["GET"])
+@app.route('/users', methods=["POST", "GET"])
 def users():
+    # Create a new User
+    if request.method == "POST":
+        if request.form.get("add_user"):
+            # Get user form inputs
+            user_name = request.form["user_name"]
+            password = request.form["password"]
+            email = request.form["email"]
+            if not request.form.get("neighborhood"):
+                user_add_query = ('INSERT INTO Users '
+                                    '(userName, password, email) '
+                                  'VALUES '
+                                    '(%s, %s, %s);')
+                query_params = (user_name, password, email, )
+            else:
+                neighborhood = request.form["neighborhood"]
+                user_add_query = ('INSERT INTO Users '
+                                    '(userName, password, email, neighborhoodID) '
+                                'VALUES '
+                                    '(%s, %s, %s, (SELECT neighborhoodID FROM Neighborhoods WHERE neighborhoodName = %s));')
+                query_params = (user_name, password, email, neighborhood, )
+            print(user_add_query)
+            with connect() as db_connection:
+                db.execute_query(db_connection=db_connection, query=user_add_query, query_params=query_params )
+
+        return redirect('/users')
+
     # Get the Users data for display
     if request.method == "GET":
         users_get_query = ('SELECT '
-                                'userID AS "User ID", '
-                                'username AS Username, '
-                                'password AS Password, '
-                                'email AS Email, '
-                                'neighborhoodID AS "Neighborhood ID" '
-                            'FROM Users;')
+                               'Users.userID AS "User ID", '
+                               'Users.username AS Username, '
+                               'Users.password AS Password, '
+                               'Users.email AS Email, '
+                               'Neighborhoods.neighborhoodName AS "Neighborhood" '
+                           'FROM Users '
+                           'LEFT JOIN Neighborhoods ON Users.neighborhoodID = Neighborhoods.neighborhoodID;')
+        neighborhoods_get_query = 'SELECT neighborhoodName FROM Neighborhoods;'
         with connect() as db_connection:
-            cursor = db.execute_query(db_connection=db_connection, query=users_get_query)
-            query_results = cursor.fetchall()
-            return render_template("users.j2", users=query_results)
+            users_cursor = db.execute_query(db_connection=db_connection, query=users_get_query)
+            neighborhoods_cursor = db.execute_query(db_connection=db_connection, query=neighborhoods_get_query)
+            users_query_results = users_cursor.fetchall()
+            neighborhoods_query_results = neighborhoods_cursor.fetchall()
+            return render_template("users.j2", users=users_query_results, neighborhoods=neighborhoods_query_results)
 
+# Route for updating the selected User
+@app.route('/edit_users/<int:id>', methods=["POST", "GET"])
+def edit_users(id):
+    print(f"Received request for id: {id}")
+
+    # Get data for the User with the specified id
+    if request.method == "GET":
+        user_get_query = ('SELECT '
+                               'Users.userID AS "User ID", '
+                               'Users.username AS Username, '
+                               'Users.password AS Password, '
+                               'Users.email AS Email, '
+                               'Neighborhoods.neighborhoodName AS "Neighborhood" '
+                            'FROM Users '
+                           'LEFT JOIN Neighborhoods ON Users.neighborhoodID = Neighborhoods.neighborhoodID '
+                            'WHERE userID = %s;')
+        neighborhoods_get_query = 'SELECT neighborhoodName FROM Neighborhoods;'
+        with connect() as db_connection:
+            user_cursor = db.execute_query(db_connection=db_connection, query=user_get_query, query_params=(id,))
+            neighborhoods_cursor = db.execute_query(db_connection=db_connection, query=neighborhoods_get_query)
+            user_query_results = user_cursor.fetchall()
+            neighborhoods_query_results = neighborhoods_cursor.fetchall()
+            print(f"Query results: {user_query_results}")
+            return render_template("edit_users.j2", user=user_query_results, neighborhoods=neighborhoods_query_results)
+
+    # Update the User with the specified id
+    if request.method == "POST":
+        # Get form input
+        user_name = request.form["user_name"]
+        password = request.form["password"]
+        email = request.form["email"]
+        if not request.form.get("neighborhood"):
+            query_params = (user_name, password, email, id,)
+            # Execute the query to update the User
+            user_update_query = ('UPDATE Users '
+                                    'SET '
+                                    'userName = %s, '
+                                    'password = %s, '
+                                    'email = %s, '                                 
+                                    'neighborhoodID = NULL '
+                                 'WHERE userID = %s;')
+        else:
+            neighborhood = request.form["neighborhood"]
+            query_params = (user_name, password, email, neighborhood, id,)
+            user_update_query = ('UPDATE Users '
+                                    'SET '
+                                    'userName = %s, '
+                                    'password = %s, '
+                                    'email = %s, '                                 
+                                    'neighborhoodID = (SELECT neighborhoodID FROM Neighborhoods WHERE neighborhoodName = %s) '
+                                 'WHERE userID = %s;')
+        with connect() as db_connection:
+            db.execute_query(db_connection=db_connection, query=user_update_query, query_params=query_params )
+
+        return redirect('/users')
+
+# Route for deleting the selected Item
+@app.route('/delete_users/<int:id>')
+def delete_users(id):
+    # Delete the Item with the specified id
+    users_delete_query = 'DELETE FROM Users WHERE userID = %s;'
+    with connect() as db_connection:
+        db.execute_query(db_connection=db_connection, query=users_delete_query, query_params=(id,))
+
+    return redirect('/users')
 
 @app.route('/items', methods=["POST", "GET"])
 def items():
@@ -181,7 +275,7 @@ def user_items():
             users_query_results = users_cursor.fetchall()
             items_query_results = items_cursor.fetchall()
             return render_template("user_items.j2", user_items=user_items_query_results, users=users_query_results, items=items_query_results, ids=ids_query_results)
-        
+
 
 # Route to edit User Items
 @app.route('/edit_user_items/<int:user_id>-<int:item_id>', methods=["POST", "GET"])
@@ -196,32 +290,38 @@ def edit_user_items(user_id, item_id):
                                 'FROM UserItems '
                                 'JOIN Users ON Users.UserID = UserItems.UserID '
                                 'JOIN Items ON Items.itemID = UserItems.itemID '
-                                'WHERE userID = %s AND itemID = %s;')
+                                'WHERE UserItems.userID = %s AND UserItems.itemID = %s '
+                               'LIMIT 1;')
         users_get_query = 'SELECT userName FROM Users;'
         items_get_query = 'SELECT itemName FROM Items;'
+        ids_get_query = ('SELECT userID, itemID FROM UserItems WHERE userID = %s AND itemID = %s;')
 
         with connect() as db_connection:
-            user_item_cursor = db.execute_query(db_connection=db_connection, query=user_item_get_query, query_params=(user_id, item_id))
+            user_item_cursor = db.execute_query(db_connection=db_connection, query=user_item_get_query, query_params=(user_id, item_id, ))
             users_cursor = db.execute_query(db_connection=db_connection, query=users_get_query)
             items_cursor = db.execute_query(db_connection=db_connection, query=items_get_query)
+            ids_cursor = db.execute_query(db_connection=db_connection, query=ids_get_query, query_params=(user_id, item_id, ))
+            ids_query_results = ids_cursor.fetchall()
             user_item_query_results = user_item_cursor.fetchall()
             users_query_results = users_cursor.fetchall()
             items_query_results = items_cursor.fetchall()
             print(f"Query results: {user_item_query_results}")
-            return render_template("edit_user_items.j2", user_item=user_item_query_results, users=users_query_results, items=items_query_results)
+            return render_template("edit_user_items.j2", user_item=user_item_query_results, users=users_query_results, items=items_query_results, ids=ids_query_results)
 
     # Update the User Item with the specified ids
     if request.method == "POST":
         # Get form input
         item_name = request.form["item_name"]
-        user_name = request.form["category_name"]
+        user_name = request.form["user_name"]
         # Execute the query to update the Item
-        item_update_query = ('UPDATE UserItems '
+        user_item_update_query = ('UPDATE UserItems '
                                 'SET '
                                     'itemID = (SELECT itemID from Items WHERE itemName = %s), '
-                                    'userID = (SELECT userID FROM Users WHERE userName = %s);')
+                                    'userID = (SELECT userID FROM Users WHERE userName = %s) '
+                                  'WHERE userID = %s AND itemID = %s '
+                                  'LIMIT 1;')
         with connect() as db_connection:
-            db.execute_query(db_connection=db_connection, query=item_update_query, query_params=(item_name, user_name,))
+            db.execute_query(db_connection=db_connection, query=user_item_update_query, query_params=(item_name, user_name, user_id, item_id))
 
         return redirect('/user_items')
 
@@ -231,7 +331,8 @@ def edit_user_items(user_id, item_id):
 def delete_user_items(user_id, item_id):
     # Delete the User Item with the specified ids
     user_items_delete_query = ('DELETE FROM UserItems '
-                                    'WHERE userID = %s AND itemID = %s;')
+                                    'WHERE userID = %s AND itemID = %s '
+                               'LIMIT 1;')
     with connect() as db_connection:
         db.execute_query(db_connection=db_connection, query=user_items_delete_query, query_params=(user_id, item_id))
 
@@ -256,8 +357,8 @@ def transfers():
                 db.execute_query(db_connection=db_connection, query=transfer_add_query, query_params=(transfer_date_time, lending_user_name, borrowing_user_name, ))
 
         return redirect('/transfers')
-    
-    
+
+
     # Get the Transfers data for display
     if request.method == "GET":
         # Source used as a reference for the following query that JOINs on the Users table twice:
@@ -283,7 +384,7 @@ def transfers():
             lending_users_query_results = lending_users_cursor.fetchall()
             borrowing_users_query_results = borrowing_users_cursor.fetchall()
             return render_template("transfers.j2", transfers=transfers_query_results, lending_users=lending_users_query_results, borrowing_users=borrowing_users_query_results)
-        
+
 
 # Route for updating the selected Transfer
 @app.route('/edit_transfers/<int:id>', methods=["POST", "GET"])
@@ -337,7 +438,7 @@ def edit_transfers(id):
             db.execute_query(db_connection=db_connection, query=transfer_update_query, query_params=(transfer_date_time, lending_user_id, borrowing_user_id, id,))
 
         return redirect('/transfers')
-    
+
 
 # Route for deleting the selected Transfer
 @app.route('/delete_transfers/<int:id>')
@@ -346,7 +447,7 @@ def delete_transfers(id):
     transfers_delete_query = 'DELETE FROM Transfers WHERE transferID = %s;'
     with connect() as db_connection:
         db.execute_query(db_connection=db_connection, query=transfers_delete_query, query_params=(id, ))
-    
+
     return redirect('/transfers')
 
 
@@ -369,7 +470,7 @@ def transfer_items():
                 db.execute_query(db_connection=db_connection, query=transfer_item_add_query, query_params=(transfer_id, transfer_item_name, quantity, milliliters, pounds, ))
 
         return redirect('/transfer_items')
-    
+
     # Get the Transfer Items data for display
     if request.method == "GET":
         transfer_items_get_query = ('SELECT '
@@ -545,7 +646,7 @@ def item_categories():
                 db.execute_query(db_connection=db_connection, query=item_category_add_query, query_params=(item_category_name, ))
 
         return redirect('/item_categories')
-    
+
     # Retrieve the Item Categories data for display
     if request.method == "GET":
         item_categories_get_query = ('SELECT '
@@ -573,21 +674,21 @@ def edit_item_categories(id):
             query_results = cursor.fetchall()
             print(f"Query results: {query_results}")
             return render_template("edit_item_categories.j2", item_category=query_results)
-    
+
     # Update the Item Category with the specified id
     if request.method == "POST":
         # Get form input
         category_name = request.form["category_name"]
-        
+
         # Execute the query to update the Item Category
         item_category_update_query = ('UPDATE ItemCategories '
                                         'SET categoryName = %s '
                                         'WHERE categoryID = %s;')
         with connect() as db_connection:
             db.execute_query(db_connection=db_connection, query=item_category_update_query, query_params=(category_name, id, ))
-    
+
         return redirect('/item_categories')
-    
+
 
 # Route for deleting the selected Item Category
 @app.route('/delete_item_categories/<int:id>')
@@ -596,7 +697,7 @@ def delete_item_categories(id):
     item_categories_delete_query = 'DELETE FROM ItemCategories WHERE categoryID = %s;'
     with connect() as db_connection:
         db.execute_query(db_connection=db_connection, query=item_categories_delete_query, query_params=(id, ))
-    
+
     return redirect('/item_categories')
 
 
