@@ -275,7 +275,7 @@ def user_items():
             users_query_results = users_cursor.fetchall()
             items_query_results = items_cursor.fetchall()
             return render_template("user_items.j2", user_items=user_items_query_results, users=users_query_results, items=items_query_results, ids=ids_query_results)
-        
+
 
 # Route to edit User Items
 @app.route('/edit_user_items/<int:user_id>-<int:item_id>', methods=["POST", "GET"])
@@ -357,8 +357,8 @@ def transfers():
                 db.execute_query(db_connection=db_connection, query=transfer_add_query, query_params=(transfer_date_time, lending_user_name, borrowing_user_name, ))
 
         return redirect('/transfers')
-    
-    
+
+
     # Get the Transfers data for display
     if request.method == "GET":
         # Source used as a reference for the following query that JOINs on the Users table twice:
@@ -384,7 +384,7 @@ def transfers():
             lending_users_query_results = lending_users_cursor.fetchall()
             borrowing_users_query_results = borrowing_users_cursor.fetchall()
             return render_template("transfers.j2", transfers=transfers_query_results, lending_users=lending_users_query_results, borrowing_users=borrowing_users_query_results)
-        
+
 
 # Route for updating the selected Transfer
 @app.route('/edit_transfers/<int:id>', methods=["POST", "GET"])
@@ -438,7 +438,7 @@ def edit_transfers(id):
             db.execute_query(db_connection=db_connection, query=transfer_update_query, query_params=(transfer_date_time, lending_user_id, borrowing_user_id, id,))
 
         return redirect('/transfers')
-    
+
 
 # Route for deleting the selected Transfer
 @app.route('/delete_transfers/<int:id>')
@@ -447,7 +447,7 @@ def delete_transfers(id):
     transfers_delete_query = 'DELETE FROM Transfers WHERE transferID = %s;'
     with connect() as db_connection:
         db.execute_query(db_connection=db_connection, query=transfers_delete_query, query_params=(id, ))
-    
+
     return redirect('/transfers')
 
 
@@ -470,22 +470,33 @@ def transfer_items():
                 db.execute_query(db_connection=db_connection, query=transfer_item_add_query, query_params=(transfer_id, transfer_item_name, quantity, milliliters, pounds, ))
 
         return redirect('/transfer_items')
-    
+
+
     # Get the Transfer Items data for display
     if request.method == "GET":
         transfer_items_get_query = ('SELECT '
                                         'TransferItems.transferItemID AS "Transfer Item ID", '
                                         'Items.itemName AS "Item Name", '
                                         'Transfers.transferID AS "Transfer ID", '
+                                        'LendingUsers.userName AS "Lending User", '
+                                        'BorrowingUsers.userName AS "Borrowing User", '
                                         'TransferItems.quantity AS Quantity, '
                                         'TransferItems.milliliters AS Milliliters, '
                                         'TransferItems.pounds AS Pounds '
                                     'FROM TransferItems '
                                     'JOIN Items ON Items.itemID = TransferItems.itemID '
                                     'JOIN Transfers ON Transfers.transferID = TransferItems.transferID '
+                                    'JOIN Users AS LendingUsers ON LendingUsers.userID = Transfers.lendingUserID '
+                                    'JOIN Users AS BorrowingUsers ON BorrowingUsers.userID = Transfers.borrowingUserID '
                                     'ORDER BY TransferItems.transferItemID;')
         items_get_query = 'SELECT itemName FROM Items;'
-        transfers_get_query = 'SELECT transferID FROM Transfers'
+        transfers_get_query = ('SELECT '
+                                    'Transfers.transferID, '
+                                    'LendingUsers.userName AS "Lending User", '
+                                    'BorrowingUsers.userName AS "Borrowing User" '
+                                'FROM Transfers '
+                                'JOIN Users AS LendingUsers ON LendingUsers.userID = Transfers.lendingUserID '
+                                'JOIN Users AS BorrowingUsers ON BorrowingUsers.userID = Transfers.borrowingUserID;')
         ids_get_query = 'SELECT transferID, itemID FROM TransferItems;'
         with connect() as db_connection:
             transfer_items_cursor = db.execute_query(db_connection=db_connection, query=transfer_items_get_query)
@@ -497,6 +508,73 @@ def transfer_items():
             transfers_query_results = transfers_cursor.fetchall()
             ids_query_results = ids_cursor.fetchall()
             return render_template("transfer_items.j2", transfer_items=transfer_items_query_results, items=items_query_results, transfers=transfers_query_results, ids=ids_query_results)
+        
+
+# Route to edit Transfer Items
+@app.route('/edit_transfer_items/<int:id>', methods=["POST", "GET"])
+def edit_transfer_items(id):
+    # Get data for the Transfer Item with the specified id
+    if request.method == "GET":
+        transfer_item_get_query = ('SELECT '
+                                        'TransferItems.transferItemID AS "Transfer Item ID", '
+                                        'Items.itemName AS "Item Name", '
+                                        'Transfers.transferID AS "Transfer ID", '
+                                        'LendingUsers.userName AS "Lending User", '
+                                        'BorrowingUsers.userName AS "Borrowing User", '
+                                        'TransferItems.quantity AS Quantity, '
+                                        'TransferItems.milliliters AS Milliliters, '
+                                        'TransferItems.pounds AS Pounds '
+                                    'FROM TransferItems '
+                                    'JOIN Items ON Items.itemID = TransferItems.itemID '
+                                    'JOIN Transfers ON Transfers.transferID = TransferItems.transferID '
+                                    'JOIN Users AS LendingUsers ON LendingUsers.userID = Transfers.lendingUserID '
+                                    'JOIN Users AS BorrowingUsers ON BorrowingUsers.userID = Transfers.borrowingUserID '
+                                    'WHERE TransferItems.transferItemID = %s;')
+        items_get_query = 'SELECT itemName FROM Items;'
+        transfers_get_query = ('SELECT '
+                                    'Transfers.transferID, '
+                                    'LendingUsers.userName AS "Lending User", '
+                                    'BorrowingUsers.userName AS "Borrowing User" '
+                                'FROM Transfers '
+                                'JOIN Users AS LendingUsers ON LendingUsers.userID = Transfers.lendingUserID '
+                                'JOIN Users AS BorrowingUsers ON BorrowingUsers.userID = Transfers.borrowingUserID;')
+
+        with connect() as db_connection:
+            transfer_item_cursor = db.execute_query(db_connection=db_connection, query=transfer_item_get_query, query_params=(id, ))
+            items_cursor = db.execute_query(db_connection=db_connection, query=items_get_query)
+            transfers_cursor = db.execute_query(db_connection=db_connection, query=transfers_get_query)
+            transfer_item_query_results = transfer_item_cursor.fetchall()
+            print(f"Transfer Item query result: {transfer_item_query_results}")
+            items_query_results = items_cursor.fetchall()
+            transfers_query_results = transfers_cursor.fetchall()
+            return render_template("edit_transfer_items.j2", transfer_item=transfer_item_query_results, transfers=transfers_query_results, items=items_query_results)
+
+    # Update the Transfer Item with the specified id
+    if request.method == "POST":
+        # Get form input
+        transfer_id = request.form["transfer_id"]
+        item_name = request.form["item_name"]
+        quantity = request.form["quantity"]
+        milliliters = request.form["milliliters"]
+        pounds = request.form["pounds"]
+        # Execute the query to update the Transfer Item
+        transfer_item_update_query = ('UPDATE TransferItems '
+                                        'SET transferID = %s, '
+                                            'itemID = %s, '
+                                            'quantity = %s, '
+                                            'milliliters = %s, '
+                                            'pounds = %s '
+                                        'WHERE transferItemID = %s;')
+        # Get item ID from the returned item name
+        item_id_get_query = ('SELECT itemID '
+                                'FROM Items '
+                                'WHERE itemName = %s;')
+        with connect() as db_connection:
+            item_id_cursor = db.execute_query(db_connection=db_connection, query=item_id_get_query, query_params=(item_name, ))
+            item_id = item_id_cursor.fetchall()[0]['itemID']
+            db.execute_query(db_connection=db_connection, query=transfer_item_update_query, query_params=(transfer_id, item_id, quantity, milliliters, pounds, id,))
+
+        return redirect('/transfer_items')
 
 
 @app.route('/delete_transfer_items/<int:transfer_id>-<int:item_id>')
@@ -591,7 +669,7 @@ def item_categories():
                 db.execute_query(db_connection=db_connection, query=item_category_add_query, query_params=(item_category_name, ))
 
         return redirect('/item_categories')
-    
+
     # Retrieve the Item Categories data for display
     if request.method == "GET":
         item_categories_get_query = ('SELECT '
@@ -607,8 +685,6 @@ def item_categories():
 # Route for updating the selected Item Category
 @app.route('/edit_item_categories/<int:id>', methods=["POST", "GET"])
 def edit_item_categories(id):
-    print(f"Received request for id: {id}")
-    
     # Get data for the Item Category with the specified id
     if request.method == "GET":
         item_category_get_query = ('SELECT '
@@ -621,21 +697,21 @@ def edit_item_categories(id):
             query_results = cursor.fetchall()
             print(f"Query results: {query_results}")
             return render_template("edit_item_categories.j2", item_category=query_results)
-    
+
     # Update the Item Category with the specified id
     if request.method == "POST":
         # Get form input
         category_name = request.form["category_name"]
-        
+
         # Execute the query to update the Item Category
         item_category_update_query = ('UPDATE ItemCategories '
                                         'SET categoryName = %s '
                                         'WHERE categoryID = %s;')
         with connect() as db_connection:
             db.execute_query(db_connection=db_connection, query=item_category_update_query, query_params=(category_name, id, ))
-    
+
         return redirect('/item_categories')
-    
+
 
 # Route for deleting the selected Item Category
 @app.route('/delete_item_categories/<int:id>')
@@ -644,7 +720,7 @@ def delete_item_categories(id):
     item_categories_delete_query = 'DELETE FROM ItemCategories WHERE categoryID = %s;'
     with connect() as db_connection:
         db.execute_query(db_connection=db_connection, query=item_categories_delete_query, query_params=(id, ))
-    
+
     return redirect('/item_categories')
 
 

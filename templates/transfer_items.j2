@@ -32,7 +32,6 @@ URL: http://www.w3schools.com/tags/tag_form.asp
         <caption>Transfer Item Data</caption>
         <tr>
             <th>
-                <button type="button">New</button>
             </th>
             <th></th>
             {% for key in transfer_items[0].keys()%}
@@ -42,7 +41,7 @@ URL: http://www.w3schools.com/tags/tag_form.asp
         {% for transfer_item in transfer_items %}
         <tr>
             <td>
-                <a>Edit</a>
+                <a href="/edit_transfer_items/{{transfer_item['Transfer Item ID']}}">Edit</a>
             </td>
             <td>
                 <a href="/delete_transfer_items/{{ids[loop.index0]['transferID']}}-{{ids[loop.index0]['itemID']}}">Delete</a>
@@ -64,6 +63,10 @@ URL: http://www.w3schools.com/tags/tag_form.asp
     W3 Schools: HTML Input Types
     Retrieved on: 03/07/2025
     URL: https://www.w3schools.com/html/html_form_input_types.asp
+
+    A delightful reference for HTML Symbols, Entities and ASCII Character Codes
+    Retrieved on: 03/10/2025
+    URL: https://www.toptal.com/designers/htmlarrows/
     #}
     <div id="form">
         <h2>Add New Transfer Item</h2>
@@ -74,10 +77,10 @@ URL: http://www.w3schools.com/tags/tag_form.asp
                     <option value="{{item['itemName']}}">{{item['itemName']}}</option>
                 {% endfor %}
             </select>
-            <label>Transfer ID:</label>
+            <label>Transfer:</label>
             <select required id="transfer_id" name="transfer_id"><br><br>
                 {% for transfer in transfers %}
-                    <option value="{{transfer['transferID']}}">{{transfer['transferID']}}</option>
+                    <option value="{{transfer['transferID']}}">Transfer ID {{transfer['transferID']}}: {{transfer['Lending User']}} &rarr; {{transfer['Borrowing User']}}</option>
                 {% endfor %}
             </select>
             <label>Quantity:</label>

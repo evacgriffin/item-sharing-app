@@ -1,0 +1,78 @@
+{#
+This code has been adapted from the following sources:
+
+Template Designer Documentation - Template Inheritance - Child Template
+Retrieved on: 02/08/2025
+URL: https://jinja.palletsprojects.com/en/stable/templates/#template-inheritance
+
+W3 Schools: HTML Tables
+Retrieved on: 02/08/2025
+URL: http://www.w3schools.com/html/html_tables.asp
+
+flask-starter-app
+Retrieved on: 02/08/2025
+URL: https://github.com/osu-cs340-ecampus/flask-starter-app
+
+W3 Schools: HTML <button> Tag
+Retrieved on: 02/09/2025
+URL: http://www.w3schools.com/tags/tag_button.asp
+
+W3 Schools: HTML <form> Tag
+Retrieved on: 02/09/2025
+URL: http://www.w3schools.com/tags/tag_form.asp
+#}
+
+{# Edit Transfer Items Page #}
+
+{% extends "edit_base.html" %}
+
+{% block content %}
+    <h1>Edit Transfer Items</h1>
+    <table>
+        <caption>Editing Transfer Item:</caption>
+        <tr>
+            {% for key in transfer_item[0].keys() %}
+            <th>{{key}}</th>
+            {% endfor %}
+        </tr>
+        {% for item in transfer_item %}
+        <tr>
+            {% for key in item.keys() %}
+            <td>{{item[key]}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div id="form">
+        <form id="edit_transfer_item" action="/edit_transfer_items/{{transfer_item[0]['Transfer Item ID']}}" method="post">
+            <legend><strong>Edit Transfer Item</strong></legend>
+
+            <fieldset>
+                <input type="hidden" value="{{transfer_item[0].transferItemID}}" id="transferItemID" name="transferItemID" required>
+
+                <label>Transfer Item Name:</label>
+                <select required id="item_name" name="item_name"><br><br>
+                    {% for item in items %}
+                        <option value="{{item['itemName']}}">{{item['itemName']}}</option>
+                    {% endfor %}
+                </select>
+                <label>Transfer ID:</label>
+                <select required id="transfer_id" name="transfer_id"><br><br>
+                    {% for transfer in transfers %}
+                        <option value="{{transfer['transferID']}}">Transfer ID {{transfer['transferID']}}: {{transfer['Lending User']}} &rarr; {{transfer['Borrowing User']}}</option>
+                    {% endfor %}
+                </select>
+                <label>Quantity:</label>
+                <input type="number" required min="1" step="1" value="1" id="quantity" name="quantity"><br><br>
+                <label>Milliliters:</label>
+                <input type="number" min="0" step="0.01" id="milliliters" name="milliliters"><br><br>
+                <label>Pounds:</label>
+                <input type="number" min="0" step="0.01" id="pounds" name="pounds"><br><br>
+            </fieldset>
+
+            <input class="btn" type="submit" name="edit_transfer_item" value="Submit">
+            <a href='/transfer_items'><input class="btn" type="button" value="Cancel"></a>
+        </form>
+    </div>
+{% endblock %}
