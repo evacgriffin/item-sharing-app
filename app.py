@@ -497,6 +497,61 @@ def transfer_items():
             transfers_query_results = transfers_cursor.fetchall()
             ids_query_results = ids_cursor.fetchall()
             return render_template("transfer_items.j2", transfer_items=transfer_items_query_results, items=items_query_results, transfers=transfers_query_results, ids=ids_query_results)
+        
+
+# Route to edit Transfer Items
+@app.route('/edit_transfer_items/<int:id>', methods=["POST", "GET"])
+def edit_transfer_items(id):
+    # Get data for the Transfer Item with the specified id
+    if request.method == "GET":
+        transfer_item_get_query = ('SELECT '
+                                        'transferItemID AS "Transfer Item ID", '
+                                        'itemID AS "Item ID", '
+                                        'transferID AS "Transfer ID", '
+                                        'quantity AS Quantity, '
+                                        'milliliters AS Milliliters, '
+                                        'pounds AS Pounds '
+                                    'FROM TransferItems '
+                                    'WHERE transferItemID = %s;')
+        items_get_query = 'SELECT itemName FROM Items;'
+        transfers_get_query = 'SELECT transferID FROM Transfers;'
+
+        with connect() as db_connection:
+            transfer_item_cursor = db.execute_query(db_connection=db_connection, query=transfer_item_get_query, query_params=(id, ))
+            items_cursor = db.execute_query(db_connection=db_connection, query=items_get_query)
+            transfers_cursor = db.execute_query(db_connection=db_connection, query=transfers_get_query)
+            transfer_item_query_results = transfer_item_cursor.fetchall()
+            print(f"Transfer Item query result: {transfer_item_query_results}")
+            items_query_results = items_cursor.fetchall()
+            transfers_query_results = transfers_cursor.fetchall()
+            return render_template("edit_transfer_items.j2", transfer_item=transfer_item_query_results, transfers=transfers_query_results, items=items_query_results)
+
+    # Update the Transfer Item with the specified id
+    if request.method == "POST":
+        # Get form input
+        transfer_id = request.form["transfer_id"]
+        item_name = request.form["item_name"]
+        quantity = request.form["quantity"]
+        milliliters = request.form["milliliters"]
+        pounds = request.form["pounds"]
+        # Execute the query to update the Transfer Item
+        transfer_item_update_query = ('UPDATE TransferItems '
+                                        'SET transferID = %s, '
+                                            'itemID = %s, '
+                                            'quantity = %s, '
+                                            'milliliters = %s, '
+                                            'pounds = %s '
+                                        'WHERE transferItemID = %s;')
+        # Get item ID from the returned item name
+        item_id_get_query = ('SELECT itemID '
+                                'FROM Items '
+                                'WHERE itemName = %s;')
+        with connect() as db_connection:
+            item_id_cursor = db.execute_query(db_connection=db_connection, query=item_id_get_query, query_params=(item_name, ))
+            item_id = item_id_cursor.fetchall()[0]['itemID']
+            db.execute_query(db_connection=db_connection, query=transfer_item_update_query, query_params=(transfer_id, item_id, quantity, milliliters, pounds, id,))
+
+        return redirect('/transfer_items')
 
 
 @app.route('/delete_transfer_items/<int:transfer_id>-<int:item_id>')
@@ -607,8 +662,6 @@ def item_categories():
 # Route for updating the selected Item Category
 @app.route('/edit_item_categories/<int:id>', methods=["POST", "GET"])
 def edit_item_categories(id):
-    print(f"Received request for id: {id}")
-
     # Get data for the Item Category with the specified id
     if request.method == "GET":
         item_category_get_query = ('SELECT '
