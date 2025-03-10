@@ -60,7 +60,7 @@ URL: http://www.w3schools.com/tags/tag_form.asp
                 <label>Transfer ID:</label>
                 <select required id="transfer_id" name="transfer_id"><br><br>
                     {% for transfer in transfers %}
-                        <option value="{{transfer['transferID']}}">{{transfer['transferID']}}</option>
+                        <option value="{{transfer['transferID']}}">Transfer ID {{transfer['transferID']}}: {{transfer['Lending User']}} &rarr; {{transfer['Borrowing User']}}</option>
                     {% endfor %}
                 </select>
                 <label>Quantity:</label>
