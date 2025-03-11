@@ -188,7 +188,8 @@ LIMIT 1;
 SELECT 
     categoryID AS "Category ID", 
     categoryName AS "Category Name" 
-FROM ItemCategories;
+FROM ItemCategories
+ORDER BY categoryID;
 
 -- Add a new item category
 INSERT INTO ItemCategories (categoryName)
@@ -216,7 +217,8 @@ WHERE categoryID = :categoryIDSelectedWithDeleteButton;
 SELECT 
     neighborhoodID AS "Neighborhood ID", 
     neighborhoodName AS "Neighborhood Name" 
-FROM Neighborhoods;
+FROM Neighborhoods
+ORDER BY neighborhoodID;
 
 -- Add a new neighborhood
 INSERT INTO Neighborhoods (neighborhoodName)
