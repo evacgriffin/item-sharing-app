@@ -607,7 +607,8 @@ def neighborhoods():
         neighborhoods_get_query = ('SELECT '
                                         'neighborhoodID AS "Neighborhood ID", '
                                         'neighborhoodName AS "Neighborhood Name" '
-                                    'FROM Neighborhoods;')
+                                    'FROM Neighborhoods '
+                                    'ORDER BY neighborhoodID;')
         with connect() as db_connection:
             cursor = db.execute_query(db_connection=db_connection, query=neighborhoods_get_query)
             query_results = cursor.fetchall()
@@ -675,7 +676,8 @@ def item_categories():
         item_categories_get_query = ('SELECT '
                                         'categoryID AS "Category ID", '
                                         'categoryName AS "Category Name" '
-                                    'FROM ItemCategories;')
+                                    'FROM ItemCategories ' 
+                                    'ORDER BY categoryID;')
         with connect() as db_connection:
             cursor = db.execute_query(db_connection=db_connection, query=item_categories_get_query)
             query_results = cursor.fetchall()
