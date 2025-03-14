@@ -25,7 +25,8 @@ SELECT
     Users.email AS Email,
     Neighborhoods.neighborhoodName AS "Neighborhood"
 FROM Users
-LEFT JOIN Neighborhoods ON Users.neighborhoodID = Neighborhoods.neighborhoodID;
+LEFT JOIN Neighborhoods ON Users.neighborhoodID = Neighborhoods.neighborhoodID
+ORDER BY Users.userID;
 
 -- Get all neighborhood names to populate the neighborhood dropdown
 SELECT neighborhoodName FROM Neighborhoods;
@@ -87,7 +88,8 @@ SELECT
     Items.itemName AS "Item Name", 
     ItemCategories.categoryName AS "Category Name" 
 FROM Items
-JOIN ItemCategories ON Items.categoryID = ItemCategories.categoryID;
+JOIN ItemCategories ON Items.categoryID = ItemCategories.categoryID
+ORDER BY Items.itemID;
 
 -- Get all category names to populate the category dropdown
 SELECT categoryName FROM ItemCategories;
@@ -130,7 +132,8 @@ SELECT
     Items.itemName AS "Item Name"
 FROM UserItems
 JOIN Users ON Users.UserID = UserItems.UserID
-JOIN Items ON Items.itemID = UserItems.itemID;
+JOIN Items ON Items.itemID = UserItems.itemID
+ORDER BY Users.userName;
 
 -- Get all user names to populate the users dropdown
 SELECT userName FROM Users;

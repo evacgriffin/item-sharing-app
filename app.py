@@ -76,7 +76,8 @@ def users():
                                'Users.email AS Email, '
                                'Neighborhoods.neighborhoodName AS "Neighborhood" '
                            'FROM Users '
-                           'LEFT JOIN Neighborhoods ON Users.neighborhoodID = Neighborhoods.neighborhoodID;')
+                           'LEFT JOIN Neighborhoods ON Users.neighborhoodID = Neighborhoods.neighborhoodID '
+                           'ORDER BY Users.userID;')
         neighborhoods_get_query = 'SELECT neighborhoodName FROM Neighborhoods;'
         with connect() as db_connection:
             users_cursor = db.execute_query(db_connection=db_connection, query=users_get_query)
@@ -176,7 +177,8 @@ def items():
                                 'Items.itemName AS "Item Name", '
                                 'ItemCategories.categoryName AS "Category Name" '
                             'FROM Items '
-                            'JOIN ItemCategories ON Items.categoryID = ItemCategories.categoryID;')
+                            'JOIN ItemCategories ON Items.categoryID = ItemCategories.categoryID '
+                            'ORDER BY Items.itemID;')
         categories_get_query = 'SELECT categoryName FROM ItemCategories;'
         with connect() as db_connection:
             items_cursor = db.execute_query(db_connection=db_connection, query=items_get_query)
@@ -260,7 +262,8 @@ def user_items():
                                     'Items.itemName AS "Item Name" '
                                 'FROM UserItems '
                                 'JOIN Users ON Users.UserID = UserItems.UserID '
-                                'JOIN Items ON Items.itemID = UserItems.itemID;')
+                                'JOIN Items ON Items.itemID = UserItems.itemID '
+                                'ORDER BY Users.userName;')
         users_get_query = 'SELECT userName FROM Users;'
         items_get_query = 'SELECT itemName FROM Items;'
         ids_get_query = 'SELECT userID, itemID FROM UserItems;'
