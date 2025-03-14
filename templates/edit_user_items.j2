@@ -54,15 +54,15 @@ URL: http://www.w3schools.com/tags/tag_form.asp
 
             <fieldset>
 
-                <label>Username:</label>
-                <select id="user_name" name="user_name"><br><br>
+                <label class="required">Username:</label>
+                <select id="user_name" name="user_name" required><br><br>
                     {% for user in users %}
                         <option value="{{user['userName']}}">{{user['userName']}}</option>
                     {% endfor %}
                 </select>
 
-                <label>Item Name:</label>
-                <select id="item_name" name="item_name"><br><br>
+                <label class="required">Item Name:</label>
+                <select id="item_name" name="item_name" required><br><br>
                     {% for item in items %}
                         <option value="{{item['itemName']}}">{{item['itemName']}}</option>
                     {% endfor %}

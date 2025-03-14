@@ -65,6 +65,11 @@ caption {
     padding: 10px;
 }
 
+.required:after {
+content:" *";
+color: red;
+}
+
 /* ---------- Footer ---------- */
 #footer {
     margin-top: 50px;

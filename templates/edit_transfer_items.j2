@@ -51,13 +51,13 @@ URL: http://www.w3schools.com/tags/tag_form.asp
             <fieldset>
                 <input type="hidden" value="{{transfer_item[0].transferItemID}}" id="transferItemID" name="transferItemID" required>
 
-                <label>Transfer Item Name:</label>
+                <label class="required">Transfer Item Name:</label>
                 <select required id="item_name" name="item_name"><br><br>
                     {% for item in items %}
                         <option value="{{item['itemName']}}">{{item['itemName']}}</option>
                     {% endfor %}
                 </select>
-                <label>Transfer ID:</label>
+                <label class="required">Transfer ID:</label>
                 <select required id="transfer_id" name="transfer_id"><br><br>
                     {% for transfer in transfers %}
                         <option value="{{transfer['transferID']}}">Transfer ID {{transfer['transferID']}}: {{transfer['Lending User']}} &rarr; {{transfer['Borrowing User']}}</option>
