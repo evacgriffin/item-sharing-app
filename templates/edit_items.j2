@@ -56,6 +56,8 @@ URL: https://www.w3schools.com/html/html_form_attributes.asp
         <form id="editItem" action="/edit_items/{{ item[0]['Item ID'] }}" method="post">
             <legend><strong>Edit Item</strong></legend>
 
+            <p>Use this form to edit the above Item's information.</p>
+
             <fieldset>
                 <input type="hidden" value="{{item[0].itemID}}" id="itemID" name="itemID" required>
 
