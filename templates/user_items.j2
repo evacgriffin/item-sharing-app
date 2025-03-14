@@ -34,6 +34,10 @@ URL: http://www.w3schools.com/tags/tag_form.asp
     <h1>User Items</h1>
     <table>
         <caption>User Item Data</caption>
+        <p id="description">
+            This table shows all currently existing relationships between Users and Items in the database.
+            A relationship between a User and an Item means that this User owns the Item and is ready to lend the Item to another User.
+        </p>
         <tr>
             <th>
             </th>
@@ -64,6 +68,9 @@ URL: https://jinja.palletsprojects.com/en/stable/templates/#for
 
     <div id="form">
         <h2>Add New User Item</h2>
+        <p id="description">
+            Use the dropdowns below to associate a User with a specific Item.
+        </p>
         <form method="post">
             <label class="required">Username:</label>
             <select id="user_name" name="user_name" required><br><br>
