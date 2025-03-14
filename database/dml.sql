@@ -1,8 +1,8 @@
 /*
 Authors:	Eva Griffin, Logan Anderson
 Course:		CS 340 - Introduction to Databases
-Date:		02/19/2025
-Assignment:	Project Step 3 FINAL VERSION - DML SQL Queries
+Date:		03/10/2025
+Assignment:	Project Step 5 DRAFT VERSION - DML SQL Queries
 
 Code Citations:
 -------------------------------------------------------------------------------------------
@@ -18,148 +18,358 @@ URL: https://canvas.oregonstate.edu/courses/1987790/assignments/9888509?module_i
 /* ---------- Users Page ---------- */
 
 -- Get all fields from Users to be displayed in the table on this page
-SELECT userID AS "User ID", username AS Username, password AS Password, email AS Email, neighborhoodID AS "Neighborhood ID" FROM Users;
+SELECT
+    Users.userID AS "User ID",
+    Users.username AS Username,
+    Users.password AS Password,
+    Users.email AS Email,
+    Neighborhoods.neighborhoodName AS "Neighborhood"
+FROM Users
+LEFT JOIN Neighborhoods ON Users.neighborhoodID = Neighborhoods.neighborhoodID;
 
--- Get all neighborhood IDs and neighborhood names to populate the neighborhood dropdown in the "Add New User" and "Edit User" forms
-SELECT neighborhoodID, neighborhoodName FROM Neighborhoods;
+-- Get all neighborhood names to populate the neighborhood dropdown
+SELECT neighborhoodName FROM Neighborhoods;
 
--- Add a new user
+-- Add a new user without an associated neighborhood (NULLable relationship)
+INSERT INTO Users (userName, password, email)
+VALUES (:userNameInput, :passwordInput, :emailInput);
+
+-- Add a new user with an associated neighborhood (NULLable relationship)
 INSERT INTO Users (userName, password, email, neighborhoodID)
-VALUES (:userNameInput, :passwordInput, :emailInput, :neighborhoodIDSelectedFromDropdown);
+VALUES (
+    :userNameInput, 
+    :passwordInput, 
+    :emailInput, 
+    (SELECT neighborhoodID 
+        FROM Neighborhoods 
+        WHERE neighborhoodName = :neighborhoodNameInput));
 
--- Edit an existing user
+-- Get all fields for the selected user to display on the Edit page
+SELECT
+    Users.userID AS "User ID",
+    Users.username AS Username,
+    Users.password AS Password,
+    Users.email AS Email,
+    Neighborhoods.neighborhoodName AS "Neighborhood"
+FROM Users
+LEFT JOIN Neighborhoods ON Users.neighborhoodID = Neighborhoods.neighborhoodID
+WHERE userID = :userIDSelectedWithEditButton;
+
+-- Edit the selected user if they don't an associated neighborhood (NULLable relationship)
 UPDATE Users
-SET userName = :userNameInput, password = :passwordInput, email = :emailInput, neighborhoodID = :neighborhoodIDSelectedFromDropdown
-WHERE userID = :userIDFromUpdateForm;
+SET 
+    userName = :userNameInput, 
+    password = :passwordInput, 
+    email = :emailInput, 
+    neighborhoodID = NULL
+WHERE userID = :userIDSelectedWithEditButton;
+
+-- Edit the selected user if they have an associated neighborhood (NULLable relationship)
+UPDATE Users
+SET 
+    userName = :userNameInput, 
+    password = :passwordInput, 
+    email = :emailInput, 
+    neighborhoodID = (SELECT neighborhoodID 
+                        FROM Neighborhoods 
+                        WHERE neighborhoodName = :neighborhoodNameSelectedFromDropdown)
+WHERE userID = :userIDSelectedWithEditButton;
 
 -- Delete a user
 DELETE FROM Users
-WHERE userID = :userIDSelectedFromUsersTable;
+WHERE userID = :userIDSelectedWithDeleteButton;
 
 /* ---------- Items Page ---------- */
 
 -- Get all fields from Items to be displayed in the table on this page
-SELECT itemID AS "Item ID", itemName AS "Item Name", categoryID AS "Category ID" FROM Items;
+SELECT 
+    Items.itemID AS "Item ID", 
+    Items.itemName AS "Item Name", 
+    ItemCategories.categoryName AS "Category Name" 
+FROM Items
+JOIN ItemCategories ON Items.categoryID = ItemCategories.categoryID;
 
--- Get all category IDs and category names to populate the category dropdown in the "Add New Item" and "Edit Item" forms
-SELECT categoryID, categoryName FROM ItemCategories;
+-- Get all category names to populate the category dropdown
+SELECT categoryName FROM ItemCategories;
 
 -- Add a new item
 INSERT INTO Items (itemName, categoryID)
-VALUES (:itemNameInput, :categoryIDSelectedFromDropdown);
+VALUES (
+    :itemNameInput, 
+    (SELECT categoryID 
+        FROM ItemCategories 
+        WHERE categoryName = :categoryNameSelectedFromDropdown));
 
--- Edit an existing item
+-- Get all fields for the selected item to display on the Edit page
+SELECT
+    Items.itemID AS "Item ID",
+    Items.itemName AS "Item Name",
+    ItemCategories.categoryName AS "Category Name"
+FROM Items
+JOIN ItemCategories ON Items.categoryID = ItemCategories.categoryID
+WHERE itemID = :itemIDSelectedWithEditButton;
+
+-- Edit the selected item
 UPDATE Items
-SET itemName = :itemNameInput, categoryID = :categoryIDSelectedFromDropdown
-WHERE itemID = :itemIDFromUpdateForm;
+SET 
+    itemName = :itemNameInput, 
+    categoryID = (SELECT categoryID 
+                    FROM ItemCategories 
+                    WHERE categoryName = :categoryNameSelectedFromDropdown)
+WHERE itemID = :itemIDSelectedWithEditButton;
 
 -- Delete an item
 DELETE FROM Items
-WHERE itemID = :itemIDSelectedFromItemsTable;
+WHERE itemID = :itemIDSelectedWithDeleteButton;
 
 /* ---------- User Items Page ---------- */
 
 -- Get all fields from UserItems to be displayed in the table on this page
-SELECT userID AS "User ID", itemID AS "Item ID" FROM UserItems;
+SELECT
+    Users.userName AS "Username",
+    Items.itemName AS "Item Name"
+FROM UserItems
+JOIN Users ON Users.UserID = UserItems.UserID
+JOIN Items ON Items.itemID = UserItems.itemID;
 
--- Get all user IDs and user names to populate the username dropdown in the "Add New User Item" form
-SELECT userID, userName FROM Users;
+-- Get all user names to populate the users dropdown
+SELECT userName FROM Users;
 
--- Get all item IDs and item names to populate the item name dropdown in the "Add New User Item" and "Edit User Item" forms
-SELECT itemID, itemName FROM Items;
+-- Get all item names to populate the item dropdown
+SELECT itemName FROM Items;
+
+-- Get all user IDs and item IDs for the Edit href
+SELECT userID, itemID FROM UserItems;
 
 -- Add a new user item
 INSERT INTO UserItems (userID, itemID)
-VALUES (:userIDSelectedFromDropdown, :itemIDSelectedFromDropdown);
+VALUES (
+    (SELECT userID FROM Users WHERE userName = :userNameSelectedFromDropdown),
+    (SELECT itemID FROM Items WHERE itemName = :itemNameSelectedFromDropdown));
 
--- Edit an existing user item
+-- Get all fields for the selected UserItem to display on the Edit page
+SELECT
+    Users.userName AS "Username",
+    Items.itemName AS "Item Name"
+FROM UserItems
+JOIN Users ON Users.UserID = UserItems.UserID
+JOIN Items ON Items.itemID = UserItems.itemID
+WHERE 
+    UserItems.userID = :userIDSelectedWithEditButton AND 
+    UserItems.itemID = :itemIDSelectedWithEditButton
+LIMIT 1;
+
+-- Get the user ID and item ID for the selected UserItem
+SELECT userID, itemID FROM UserItems 
+WHERE 
+    userID = :userIDSelectedWithEditButton AND 
+    itemID = :itemIDSelectedWithEditButton;
+
+-- Edit the selected user item
 UPDATE UserItems
-SET itemID = :itemIDSelectedFromDropdown
-WHERE userID = :itemIDFromUpdateForm AND itemID = :itemIDSelectedFromUserItemsTable;
+SET 
+    itemID = (SELECT itemID from Items WHERE itemName = :itemNameSelectedFromDropdown),
+    userID = (SELECT userID FROM Users WHERE userName = :userNameSelectedFromDropdown)
+WHERE 
+    userID = :userIDSelectedWithEditButton AND 
+    itemID = :itemIDSelectedWithEditButton
+LIMIT 1;
 
 -- Delete a user item
 DELETE FROM UserItems
-WHERE userID = :userIDSelectedFromUserItemsTable AND itemID = :itemIDSelectedFromUserItemsTable;
+WHERE 
+    userID = :userIDSelectedWithDeleteButton AND 
+    itemID = :itemIDSelectedWithDeleteButton
+LIMIT 1;
 
 /* ---------- Item Categories Page ---------- */
 
--- Get all category IDs and category names to be displayed in the table on this page
-SELECT categoryID AS "Category ID", categoryName AS "Category Name" FROM ItemCategories;
+-- Get all fields from ItemCategories to be displayed in the table on this page
+SELECT 
+    categoryID AS "Category ID", 
+    categoryName AS "Category Name" 
+FROM ItemCategories
+ORDER BY categoryID;
 
 -- Add a new item category
 INSERT INTO ItemCategories (categoryName)
 VALUES (:categoryNameInput);
 
--- Edit an existing item category
+-- Get all fields for the selected ItemCategory to display on the Edit page
+SELECT 
+    categoryID AS "Category ID", 
+    categoryName AS "Category Name" 
+FROM ItemCategories
+WHERE categoryID = :categoryIDSelectedWithEditButton;
+
+-- Edit the selected item category
 UPDATE ItemCategories
 SET categoryName = :categoryNameInput
-WHERE categoryID = :categoryIDFromUpdateForm;
+WHERE categoryID = :categoryIDSelectedWithEditButton;
 
 -- Delete an item category
 DELETE FROM ItemCategories
-WHERE categoryID = :categoryIDSelectedFromCategoriesPage;
+WHERE categoryID = :categoryIDSelectedWithDeleteButton;
 
 /* ---------- Neighborhoods Page ---------- */
 
--- Get all neighborhood IDs and neighborhood names to be displayed in the table on this page
-SELECT neighborhoodID AS "Neighborhood ID", neighborhoodName AS "Neighborhood Name" FROM Neighborhoods;
+-- Get all fields from Neighborhoods to be displayed in the table on this page
+SELECT 
+    neighborhoodID AS "Neighborhood ID", 
+    neighborhoodName AS "Neighborhood Name" 
+FROM Neighborhoods
+ORDER BY neighborhoodID;
 
 -- Add a new neighborhood
 INSERT INTO Neighborhoods (neighborhoodName)
 VALUES (:neighborhoodNameInput);
 
--- Edit an existing neighborhood
+-- Get all fields for the selected Neighborhood to display on the Edit page
+SELECT 
+    neighborhoodID AS "Neighborhood ID", 
+    neighborhoodName AS "Neighborhood Name" 
+FROM Neighborhoods
+WHERE neighborhoodID = :neighborhoodIDSelectedWithEditButton;
+
+-- Edit the selected neighborhood
 UPDATE Neighborhoods
 SET neighborhoodName = :neighborhoodNameInput
-WHERE neighborhoodID = :neighborhoodIDFromUpdateForm;
+WHERE neighborhoodID = :neighborhoodIDSelectedWithEditButton;
 
 -- Delete an item category
 DELETE FROM Neighborhoods
-WHERE neighborhoodID = :neighborhoodIDSelectedFromNeighborhoodsPage;
+WHERE neighborhoodID = :neighborhoodIDSelectedWithDeleteButton;
 
 /* ---------- Transfers Page ---------- */
 
--- Get all fields from the Transfers table to be displayed in the table on this page
-SELECT transferID AS "Transfer ID", transferDateTime AS "Transfer Date and Time", lendingUserID AS "Lending User ID", borrowingUserID AS "Borrowing User ID" FROM Transfers;
+-- Get all fields from Transfers to be displayed in the table on this page
+SELECT 
+    TransferUsers.transferID AS "Transfer ID", 
+    TransferUsers.transferDateTime AS "Transfer Date and Time",
+    LendingUsers.userName AS "Lending User", 
+    BorrowingUsers.userName AS "Borrowing User"
+FROM Transfers AS TransferUsers
+JOIN Users AS LendingUsers ON LendingUsers.userID = TransferUsers.lendingUserID
+JOIN Users AS BorrowingUsers ON BorrowingUsers.userID = TransferUsers.borrowingUserID
+ORDER BY TransferUsers.transferID;
 
--- Get user IDs and userNames to populate dropdowns
-SELECT userID AS lendingUserID, userName FROM Users;
-SELECT userID AS borrowingUserID, userName FROM Users;
+-- Get all user names to populate the lending users dropdown
+SELECT userName AS lendingUserName FROM Users;
+
+-- Get all user names to populate the borrowing users dropdown
+SELECT userName AS borrowingUserName FROM Users;
 
 -- Add a new transfer
 INSERT INTO Transfers (transferDateTime, lendingUserID, borrowingUserID)
-VALUES (:transferDateTimeInput, :lendingUserIDFromDropdown, :borrowingUserIDFromDropdown);
+VALUES (
+    :transferDateTimeInput, 
+    (SELECT userID FROM Users WHERE userName = :lendingUserNameSelectedFromDropdown),
+    (SELECT userID FROM Users WHERE userName = :borrowingUserNameSelectedFromDropdown));
 
--- Edit an existing transfer
+-- Get all fields for the selected Transfer to display on the Edit page
+SELECT 
+    TransferUsers.transferID AS "Transfer ID", 
+    TransferUsers.transferDateTime AS "Transfer Date and Time",
+    TransferUsers.borrowingUserID, 
+    TransferUsers.lendingUserID
+FROM Transfers AS TransferUsers
+JOIN Users AS LendingUsers ON LendingUsers.userID = TransferUsers.lendingUserID
+JOIN Users AS BorrowingUsers ON BorrowingUsers.userID = TransferUsers.borrowingUserID
+WHERE TransferUsers.transferID = :transferIDSelectedWithEditButton;
+
+-- Get the lending user ID for the selected Transfer
+SELECT userID FROM Users WHERE userName = :lendingUserNameForTransferSelectedWithEditButton;
+
+-- Get the borrowing user ID for the selected Transfer
+SELECT userID FROM Users WHERE userName = :borrowingUserNameForTransferSelectedWithEditButton;
+
+-- Edit the selected transfer
 UPDATE Transfers
-SET transferDateTime = :transferDateTimeInput, lendingUserID = :lendingUserIDFromDropdown, borrowingUserID = :borrowingUserIDFromDropdown
-WHERE transferID = :transferIDFromUpdateForm;
+SET 
+    transferDateTime = :transferDateTimeInput, 
+    lendingUserID = :lendingUserIDObtainedWithAboveQuery, 
+    borrowingUserID = :borrowingUserIDObtainedWithAboveQuery
+WHERE transferID = :transferIDSelectedWithEditButton;
 
 -- Delete an item category
 DELETE FROM Transfers
-WHERE transferID = :transferIDSelectedFromTransfersPage;
+WHERE transferID = :transferIDSelectedWithDeleteButton;
 
 /* ---------- Transfer Items Page ---------- */
 
--- Get all fields from the TransferItems table to be displayed in the table on this page
-SELECT transferItemID AS "Transfer Item ID", itemID AS "Item ID", transferID AS "Transfer ID", quantity AS Quantity, milliliters AS Milliliters, pounds AS Pounds FROM TransferItems;
+-- Get all fields from TransferItems to be displayed in the table on this page
+SELECT
+    TransferItems.transferItemID AS "Transfer Item ID",
+    Items.itemName AS "Item Name",
+    Transfers.transferID AS "Transfer ID",
+    LendingUsers.userName AS "Lending User",
+    BorrowingUsers.userName AS "Borrowing User",
+    TransferItems.quantity AS Quantity,
+    TransferItems.milliliters AS Milliliters,
+    TransferItems.pounds AS Pounds
+FROM TransferItems
+JOIN Items ON Items.itemID = TransferItems.itemID
+JOIN Transfers ON Transfers.transferID = TransferItems.transferID
+JOIN Users AS LendingUsers ON LendingUsers.userID = Transfers.lendingUserID
+JOIN Users AS BorrowingUsers ON BorrowingUsers.userID = Transfers.borrowingUserID
+ORDER BY TransferItems.transferItemID;
 
--- Get all transfer IDs and their associated user IDs to populate the transfer dropdown
-SELECT transferID, lendingUserID, borrowingUserID FROM Transfers;
+-- Get all item names to populate the item dropdown
+SELECT itemName FROM Items;
 
--- Get all item IDs and item names to populate the items dropdown
-SELECT itemID, itemName FROM Items;
+-- Get all transfer IDs and user names from Transfers to populate the transfer dropdown
+SELECT
+    Transfers.transferID,
+    LendingUsers.userName AS "Lending User",
+    BorrowingUsers.userName AS "Borrowing User"
+FROM Transfers
+JOIN Users AS LendingUsers ON LendingUsers.userID = Transfers.lendingUserID
+JOIN Users AS BorrowingUsers ON BorrowingUsers.userID = Transfers.borrowingUserID;
 
--- Add a new transfer item relationship to the table
--- Associate an existing item with a transfer (M:N relationship)
+-- Get all transfer IDs and item IDs for the Edit href
+SELECT transferID, itemID FROM TransferItems;
+
+-- Add a new transfer item
 INSERT INTO TransferItems (transferID, itemID, quantity, milliliters, pounds)
-VALUES (:transferIDFromDropdown, :itemIDFromDropdown, :quantityInput, :millilitersInput, :poundsInput);
+VALUES (
+    :transferIDSelectedFromDropdown
+    (SELECT itemID FROM Items WHERE itemName = :itemNameSelectedFromDropdown),
+    :quantityInput,
+    :millilitersInput,
+    :poundsInput);
 
--- Edit an existing transfer-item relationship
+-- Get all fields for the selected transfer item to display on the Edit page
+SELECT
+    TransferItems.transferItemID AS "Transfer Item ID",
+    Items.itemName AS "Item Name",
+    Transfers.transferID AS "Transfer ID",
+    LendingUsers.userName AS "Lending User",
+    BorrowingUsers.userName AS "Borrowing User",
+    TransferItems.quantity AS Quantity,
+    TransferItems.milliliters AS Milliliters,
+    TransferItems.pounds AS Pounds
+FROM TransferItems
+JOIN Items ON Items.itemID = TransferItems.itemID
+JOIN Transfers ON Transfers.transferID = TransferItems.transferID
+JOIN Users AS LendingUsers ON LendingUsers.userID = Transfers.lendingUserID
+JOIN Users AS BorrowingUsers ON BorrowingUsers.userID = Transfers.borrowingUserID
+WHERE TransferItems.transferItemID = :transferItemIDSelectedWithEditButton;
+
+-- Get the item ID for the item name selected from the dropdown
+SELECT itemID FROM Items WHERE itemName = :itemNameSelectedFromDropdown;
+
+-- Edit the selected transfer item
 UPDATE TransferItems
-SET transferID = :transferIDFromDropdown, itemID = :itemIDFromDropdown, quantity = :quantityInput, milliliters = :millilitersInput, pounds = :poundsInput
-WHERE transferItemID = :transferItemIDFromUpdateForm;
+SET
+    transferID = :transferIDSelectedFromDropdown,
+    itemID = :itemIDFromAboveQuery,
+    quantity = :quantityInput,
+    milliliters = :millilitersInput,
+    pounds = :poundsInput
+WHERE transferItemID = :transferItemIDSelectedWithEditButton;
 
--- Delete a transfer-item relationship
+-- Delete the selected transfer item
 DELETE FROM TransferItems
-WHERE transferItemID = :transferItemIDSelectedFromTable;
+WHERE 
+    transferID = :transferIDSelectedWithDeleteButton AND 
+    itemID = :itemIDSelectedWithDeleteButton;
