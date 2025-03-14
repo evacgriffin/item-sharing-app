@@ -52,6 +52,8 @@ URL: https://www.w3schools.com/html/html_form_attributes.asp
         <form id="editNeighborhood" action="/edit_neighborhoods/{{neighborhood[0]['Neighborhood ID']}}" method="post">
             <legend><strong>Edit Neighborhood</strong></legend>
 
+            <p>Use this form to edit the above Neighborhood's information.</p>
+
             <fieldset>
                 <input type="hidden" value="{{neighborhood[0].neighborhoodID}}" id="neighborhoodID" name="neighborhoodID" required>
 

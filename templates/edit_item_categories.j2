@@ -52,6 +52,8 @@ URL: https://www.w3schools.com/html/html_form_attributes.asp
         <form id="editItemCategory" action="/edit_item_categories/{{item_category[0]['Category ID']}}" method="post">
             <legend><strong>Edit Item Category</strong></legend>
 
+            <p>Use this form to edit the above Item Category's information.</p>
+
             <fieldset>
                 <input type="hidden" value="{{item_category[0].categoryID}}" id="categoryID" name="categoryID" required>
 
