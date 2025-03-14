@@ -2,7 +2,7 @@
 Authors:	Eva Griffin, Logan Anderson
 Course:		CS 340 - Introduction to Databases
 Date:		02/19/2025
-Assignment:	Project Step 3 FINAL VERSION - DDL with Sample Data
+Assignment:	Project Step 6 - Portfolio
 
 Code Citations:
 -------------------------------------------------------------------------------------------
