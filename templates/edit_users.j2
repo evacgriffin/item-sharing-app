@@ -24,6 +24,10 @@ URL: http://www.w3schools.com/tags/tag_form.asp
 W3 Schools: HTML <select> Tag
 Retrieved on: 03/04/2025
 URL: http://www.w3schools.com/tags/tag_form.asp
+
+W3 Schools: HTML Input Attributes
+Retrieved on: 03/14/2025
+URL: https://www.w3schools.com/html/html_form_attributes.asp
 #}
 
 {# Edit Users Page #}
@@ -56,18 +60,25 @@ URL: http://www.w3schools.com/tags/tag_form.asp
                 <input type="hidden" value="{{user[0].userID}}" id="userID" name="userID" required>
 
                 <label class="required">User Name:</label>
-                <input type="text" id="user_name" name="user_name" required>
+                <input type="text" id="user_name" name="user_name" value={{user[0]['Username']}} required>
 
                 <label class="required">Password:</label>
-                <input type="text" id="password" name="password" required>
+                <input type="text" id="password" name="password" value={{user[0]['Password']}} required>
 
                 <label class="required">Email:</label>
-                <input type="text" id="email" name="email" required>
+                <input type="text" id="email" name="email" value={{user[0]['Email']}} required>
 
                 <label>Neighborhood:</label>
                 <select id="neighborhood" name="neighborhood"><br><br>
+                    {#
+                    The code to select the current value in the dropdown is based on:
+                    stackoverflow post "Set default value for select html element in Jinja template?"
+                    Answer from User Matt Healy
+                    Retrieved on: 03/14/2025
+                    URL: https://stackoverflow.com/questions/29451208/set-default-value-for-select-html-element-in-jinja-template
+                    #}
                     {% for neighborhood in neighborhoods %}
-                        <option value="{{neighborhood['neighborhoodName']}}">{{neighborhood['neighborhoodName']}}</option>
+                        <option value="{{neighborhood['neighborhoodName']}}" {% if neighborhood['neighborhoodName']==user[0]['Neighborhood'] %} selected="selected" {% endif %}>{{neighborhood['neighborhoodName']}}</option>
                     {% endfor %}
                     <option value="">None</option>
                 </select>

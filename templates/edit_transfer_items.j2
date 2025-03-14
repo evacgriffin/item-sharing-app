@@ -20,6 +20,10 @@ URL: http://www.w3schools.com/tags/tag_button.asp
 W3 Schools: HTML <form> Tag
 Retrieved on: 02/09/2025
 URL: http://www.w3schools.com/tags/tag_form.asp
+
+W3 Schools: HTML Input Attributes
+Retrieved on: 03/14/2025
+URL: https://www.w3schools.com/html/html_form_attributes.asp
 #}
 
 {# Edit Transfer Items Page #}
@@ -53,22 +57,36 @@ URL: http://www.w3schools.com/tags/tag_form.asp
 
                 <label class="required">Transfer Item Name:</label>
                 <select required id="item_name" name="item_name"><br><br>
+                    {#
+                    The code to select the current value in the dropdown is based on:
+                    stackoverflow post "Set default value for select html element in Jinja template?"
+                    Answer from User Matt Healy
+                    Retrieved on: 03/14/2025
+                    URL: https://stackoverflow.com/questions/29451208/set-default-value-for-select-html-element-in-jinja-template
+                    #}
                     {% for item in items %}
-                        <option value="{{item['itemName']}}">{{item['itemName']}}</option>
+                        <option value="{{item['itemName']}}" {% if item['itemName']==transfer_item[0]['Item Name'] %} selected="selected" {% endif %}>{{item['itemName']}}</option>
                     {% endfor %}
                 </select>
                 <label class="required">Transfer ID:</label>
                 <select required id="transfer_id" name="transfer_id"><br><br>
+                    {#
+                    The code to select the current value in the dropdown is based on:
+                    stackoverflow post "Set default value for select html element in Jinja template?"
+                    Answer from User Matt Healy
+                    Retrieved on: 03/14/2025
+                    URL: https://stackoverflow.com/questions/29451208/set-default-value-for-select-html-element-in-jinja-template
+                    #}
                     {% for transfer in transfers %}
-                        <option value="{{transfer['transferID']}}">Transfer ID {{transfer['transferID']}}: {{transfer['Lending User']}} &rarr; {{transfer['Borrowing User']}}</option>
+                        <option value="{{transfer['transferID']}}" {% if transfer['transferID']==transfer_item[0]['Transfer ID'] %} selected="selected" {% endif %}>Transfer ID {{transfer['transferID']}}: {{transfer['Lending User']}} &rarr; {{transfer['Borrowing User']}}</option>
                     {% endfor %}
                 </select>
                 <label>Quantity:</label>
-                <input type="number" required min="1" step="1" value="1" id="quantity" name="quantity"><br><br>
+                <input type="number" required min="1" step="1" id="quantity" name="quantity" value={{transfer_item[0]['Quantity']}}><br><br>
                 <label>Milliliters:</label>
-                <input type="number" min="0" step="0.01" id="milliliters" name="milliliters"><br><br>
+                <input type="number" min="0" step="0.01" id="milliliters" name="milliliters" value={{transfer_item[0]['Milliliters']}}><br><br>
                 <label>Pounds:</label>
-                <input type="number" min="0" step="0.01" id="pounds" name="pounds"><br><br>
+                <input type="number" min="0" step="0.01" id="pounds" name="pounds" value={{transfer_item[0]['Pounds']}}><br><br>
             </fieldset>
 
             <input class="btn" type="submit" name="edit_transfer_item" value="Submit">

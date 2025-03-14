@@ -1,7 +1,7 @@
 /*
 Authors:	Eva Griffin, Logan Anderson
 Course:		CS 340 - Introduction to Databases
-Date:		03/10/2025
+Date:		03/14/2025
 Assignment:	Project Step 6 - Portfolio
 
 Code Citations:
@@ -254,10 +254,10 @@ JOIN Users AS BorrowingUsers ON BorrowingUsers.userID = TransferUsers.borrowingU
 ORDER BY TransferUsers.transferID;
 
 -- Get all user names to populate the lending users dropdown
-SELECT userName AS lendingUserName FROM Users;
+SELECT userID, userName AS lendingUserName FROM Users;
 
 -- Get all user names to populate the borrowing users dropdown
-SELECT userName AS borrowingUserName FROM Users;
+SELECT userID, userName AS borrowingUserName FROM Users;
 
 -- Add a new transfer
 INSERT INTO Transfers (transferDateTime, lendingUserID, borrowingUserID)

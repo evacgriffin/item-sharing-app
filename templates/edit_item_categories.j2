@@ -20,6 +20,10 @@ URL: http://www.w3schools.com/tags/tag_button.asp
 W3 Schools: HTML <form> Tag
 Retrieved on: 02/09/2025
 URL: http://www.w3schools.com/tags/tag_form.asp
+
+W3 Schools: HTML Input Attributes
+Retrieved on: 03/14/2025
+URL: https://www.w3schools.com/html/html_form_attributes.asp
 #}
 
 {# Edit Item Categories Page #}
@@ -51,8 +55,8 @@ URL: http://www.w3schools.com/tags/tag_form.asp
             <fieldset>
                 <input type="hidden" value="{{item_category[0].categoryID}}" id="categoryID" name="categoryID" required>
 
-                <label class="required">Category Name:<</label>
-                <input type="text" id="category_name" name="category_name" required>
+                <label class="required">Category Name:</label>
+                <input type="text" id="category_name" name="category_name" value={{item_category[0]['Category Name']}} required>
             </fieldset>
 
             <input class="btn" type="submit" name="edit_item_category" value="Submit">

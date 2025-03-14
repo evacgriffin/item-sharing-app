@@ -24,6 +24,10 @@ URL: http://www.w3schools.com/tags/tag_form.asp
 W3 Schools: HTML <select> Tag
 Retrieved on: 03/04/2025
 URL: http://www.w3schools.com/tags/tag_form.asp
+
+W3 Schools: HTML Input Attributes
+Retrieved on: 03/14/2025
+URL: https://www.w3schools.com/html/html_form_attributes.asp
 #}
 
 {# Edit User Items Page #}
@@ -56,15 +60,29 @@ URL: http://www.w3schools.com/tags/tag_form.asp
 
                 <label class="required">Username:</label>
                 <select id="user_name" name="user_name" required><br><br>
+                    {#
+                    The code to select the current value in the dropdown is based on:
+                    stackoverflow post "Set default value for select html element in Jinja template?"
+                    Answer from User Matt Healy
+                    Retrieved on: 03/14/2025
+                    URL: https://stackoverflow.com/questions/29451208/set-default-value-for-select-html-element-in-jinja-template
+                    #}
                     {% for user in users %}
-                        <option value="{{user['userName']}}">{{user['userName']}}</option>
+                        <option value="{{user['userName']}}" {% if user['userName']==user_item[0]['Username'] %} selected="selected" {% endif %}>{{user['userName']}}</option>
                     {% endfor %}
                 </select>
 
                 <label class="required">Item Name:</label>
                 <select id="item_name" name="item_name" required><br><br>
+                    {#
+                    The code to select the current value in the dropdown is based on:
+                    stackoverflow post "Set default value for select html element in Jinja template?"
+                    Answer from User Matt Healy
+                    Retrieved on: 03/14/2025
+                    URL: https://stackoverflow.com/questions/29451208/set-default-value-for-select-html-element-in-jinja-template
+                    #}
                     {% for item in items %}
-                        <option value="{{item['itemName']}}">{{item['itemName']}}</option>
+                        <option value="{{item['itemName']}}" {% if item['itemName']==user_item[0]['Item Name'] %} selected="selected" {% endif %}>{{item['itemName']}}</option>
                     {% endfor %}
                 </select>
             </fieldset>

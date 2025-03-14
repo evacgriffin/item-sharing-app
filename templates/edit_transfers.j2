@@ -20,6 +20,10 @@ URL: http://www.w3schools.com/tags/tag_button.asp
 W3 Schools: HTML <form> Tag
 Retrieved on: 02/09/2025
 URL: http://www.w3schools.com/tags/tag_form.asp
+
+W3 Schools: HTML Input Attributes
+Retrieved on: 03/14/2025
+URL: https://www.w3schools.com/html/html_form_attributes.asp
 #}
 
 {# Edit Transfers Page #}
@@ -52,17 +56,31 @@ URL: http://www.w3schools.com/tags/tag_form.asp
                 <input type="hidden" value="{{transfer[0].transferID}}" id="transferID" name="transferID" required>
                 
                 <label class="required">Date and Time of Transfer:</label>
-                <input type="datetime-local" required id="transfer_date_time" name="transfer_date_time"><br><br>
+                <input type="datetime-local" required id="transfer_date_time" name="transfer_date_time" value={{transfer[0]['Transfer Date and Time']}}><br><br>
                 <label class="required">Lending Username:</label>
                 <select required id="lending_user_name" name="lending_user_name" required><br><br>
+                    {#
+                    The code to select the current value in the dropdown is based on:
+                    stackoverflow post "Set default value for select html element in Jinja template?"
+                    Answer from User Matt Healy
+                    Retrieved on: 03/14/2025
+                    URL: https://stackoverflow.com/questions/29451208/set-default-value-for-select-html-element-in-jinja-template
+                    #}
                     {% for lending_user in lending_users %}
-                        <option value="{{lending_user['lendingUserName']}}">{{lending_user['lendingUserName']}}</option>
+                        <option value="{{lending_user['lendingUserName']}}" {% if lending_user['userID']==transfer[0]['lendingUserID'] %} selected="selected" {% endif %}>{{lending_user['lendingUserName']}}</option>
                     {% endfor %}
                 </select>
                 <label class="required">Borrowing Username:</label>
                 <select required id="borrowing_user_name" name="borrowing_user_name"><br><br>
+                    {#
+                    The code to select the current value in the dropdown is based on:
+                    stackoverflow post "Set default value for select html element in Jinja template?"
+                    Answer from User Matt Healy
+                    Retrieved on: 03/14/2025
+                    URL: https://stackoverflow.com/questions/29451208/set-default-value-for-select-html-element-in-jinja-template
+                    #}
                     {% for borrowing_user in borrowing_users %}
-                        <option value="{{borrowing_user['borrowingUserName']}}">{{borrowing_user['borrowingUserName']}}</option>
+                        <option value="{{borrowing_user['borrowingUserName']}}" {% if borrowing_user['userID']==transfer[0]['borrowingUserID'] %} selected="selected" {% endif %}>{{borrowing_user['borrowingUserName']}}</option>
                     {% endfor %}
                 </select>
             </fieldset>
