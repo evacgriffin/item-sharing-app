@@ -30,6 +30,10 @@ URL: http://www.w3schools.com/tags/tag_form.asp
     <h1>Transfer Items</h1>
     <table>
         <caption>Transfer Item Data</caption>
+        <p id="description">
+            This table shows all currently existing relationships between Transfers and Items in the database.
+            A relationship between a Transfer and an Item means that the specific Item will be given from the lending to the borrowing User during this Transfer.
+        </p>
         <tr>
             <th>
             </th>
@@ -70,6 +74,10 @@ URL: http://www.w3schools.com/tags/tag_form.asp
     #}
     <div id="form">
         <h2>Add New Transfer Item</h2>
+        <p id="description">
+            Use the dropdowns below to associate a Transfer with the Item that will be exchanged.
+            If applicable, the quantity, weight, and/or volume of the transferred item should be specified here as well.
+        </p>
         <form method="post">
             <label class="required">Item Name:</label>
             <select required id="transfer_item_name" name="transfer_item_name"><br><br>
