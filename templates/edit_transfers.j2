@@ -56,7 +56,14 @@ URL: https://www.w3schools.com/html/html_form_attributes.asp
                 <input type="hidden" value="{{transfer[0].transferID}}" id="transferID" name="transferID" required>
                 
                 <label class="required">Date and Time of Transfer:</label>
-                <input type="datetime-local" required id="transfer_date_time" name="transfer_date_time" value={{transfer[0]['Transfer Date and Time']}}><br><br>
+                {#
+                The code to set a minimum value for the date is based on:
+                mdn web docs
+                <input type="datetime-local">
+                Retrieved on: 03/14/2025
+                URL: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local
+                #}
+                <input type="datetime-local" required min="2025-01-01T00:00" id="transfer_date_time" name="transfer_date_time" value={{transfer[0]['Transfer Date and Time']}}><br><br>
                 <label class="required">Lending Username:</label>
                 <select required id="lending_user_name" name="lending_user_name" required><br><br>
                     {#

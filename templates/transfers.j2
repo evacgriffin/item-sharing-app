@@ -68,7 +68,14 @@ URL: http://www.w3schools.com/tags/tag_form.asp
         <h2>Add New Transfer</h2>
         <form method="post">
             <label class="required">Date and Time of Transfer:</label>
-            <input type="datetime-local" required id="transfer_date_time" name="transfer_date_time"><br><br>
+            {#
+            The code to set a minimum value for the date is based on:
+            mdn web docs
+            <input type="datetime-local">
+            Retrieved on: 03/14/2025
+            URL: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local
+            #}
+            <input type="datetime-local" required min="2025-01-01T00:00" id="transfer_date_time" name="transfer_date_time"><br><br>
             <label class="required">Lending Username:</label>
             <select required id="lending_user_name" name="lending_user_name"><br><br>
                 {% for lending_user in lending_users %}
