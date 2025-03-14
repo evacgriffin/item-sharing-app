@@ -60,10 +60,10 @@ URL: http://www.w3schools.com/tags/tag_form.asp
     <div id="form">
         <h2>Add New Item</h2>
         <form method="post">
-            <label>Item Name:</label>
-            <input type="text" id="item_name" name="item_name"><br><br>
-            <label>Item Category:</label>
-            <select id="category_name" name="category_name"><br><br>
+            <label class="required">Item Name:</label>
+            <input type="text" id="item_name" name="item_name" required><br><br>
+            <label class="required">Item Category:</label>
+            <select id="category_name" name="category_name" required><br><br>
                 {% for category in categories %}
                     <option value="{{category['categoryName']}}">{{category['categoryName']}}</option>
                 {% endfor %}

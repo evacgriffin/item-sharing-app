@@ -55,11 +55,11 @@ URL: http://www.w3schools.com/tags/tag_form.asp
             <fieldset>
                 <input type="hidden" value="{{item[0].itemID}}" id="itemID" name="itemID" required>
 
-                <label>Item Name:</label>
-                <input type="text" id="item_name" name="item_name">
+                <label class="required">Item Name:</label>
+                <input type="text" id="item_name" name="item_name" required>
 
-                <label>Item Category:</label>
-                <select id="category_name" name="category_name"><br><br>
+                <label class="required">Item Category:</label>
+                <select id="category_name" name="category_name" required><br><br>
                     {% for category in categories %}
                         <option value="{{category['categoryName']}}">{{category['categoryName']}}</option>
                     {% endfor %}

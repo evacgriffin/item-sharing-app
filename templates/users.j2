@@ -60,14 +60,14 @@ URL: http://www.w3schools.com/tags/tag_form.asp
     <div id="form">
         <h2>Add New User</h2>
         <form method="post">
-            <label>Username:</label>
-            <input type="text" id="user_name" name="user_name"><br><br>
-            <label>Password:</label>
-            <input type="text" id="password" name="password"><br><br>
-            <label>Email:</label>
-            <input type="text" id="email" name="email"><br><br>
-            <label>Neighborhood:</label>
-            <select id="neighborhood" name="neighborhood"><br><br>
+            <label class="required">Username:</label>
+            <input type="text" id="user_name" name="user_name" required><br><br>
+            <label class="required">Password:</label>
+            <input type="text" id="password" name="password" required><br><br>
+            <label class="required">Email:</label>
+            <input type="text" id="email" name="email" required><br><br>
+            <label class="required">Neighborhood:</label>
+            <select id="neighborhood" name="neighborhood" required><br><br>
                 {% for neighborhood in neighborhoods %}
                     <option value="{{neighborhood['neighborhoodName']}}">{{neighborhood['neighborhoodName']}}</option>
                 {% endfor %}

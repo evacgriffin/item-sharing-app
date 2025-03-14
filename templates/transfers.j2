@@ -67,15 +67,15 @@ URL: http://www.w3schools.com/tags/tag_form.asp
     <div id="form">
         <h2>Add New Transfer</h2>
         <form method="post">
-            <label>Date and Time of Transfer:</label>
+            <label class="required">Date and Time of Transfer:</label>
             <input type="datetime-local" required id="transfer_date_time" name="transfer_date_time"><br><br>
-            <label>Lending Username:</label>
+            <label class="required">Lending Username:</label>
             <select required id="lending_user_name" name="lending_user_name"><br><br>
                 {% for lending_user in lending_users %}
                     <option value="{{lending_user['lendingUserName']}}">{{lending_user['lendingUserName']}}</option>
                 {% endfor %}
             </select>
-            <label>Borrowing Username:</label>
+            <label class="required">Borrowing Username:</label>
             <select required id="borrowing_user_name" name="borrowing_user_name"><br><br>
                 {% for borrowing_user in borrowing_users %}
                     <option value="{{borrowing_user['borrowingUserName']}}">{{borrowing_user['borrowingUserName']}}</option>

@@ -71,13 +71,13 @@ URL: http://www.w3schools.com/tags/tag_form.asp
     <div id="form">
         <h2>Add New Transfer Item</h2>
         <form method="post">
-            <label>Item Name:</label>
+            <label class="required">Item Name:</label>
             <select required id="transfer_item_name" name="transfer_item_name"><br><br>
                 {% for item in items %}
                     <option value="{{item['itemName']}}">{{item['itemName']}}</option>
                 {% endfor %}
             </select>
-            <label>Transfer:</label>
+            <label class="required">Transfer:</label>
             <select required id="transfer_id" name="transfer_id"><br><br>
                 {% for transfer in transfers %}
                     <option value="{{transfer['transferID']}}">Transfer ID {{transfer['transferID']}}: {{transfer['Lending User']}} &rarr; {{transfer['Borrowing User']}}</option>
