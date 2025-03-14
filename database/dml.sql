@@ -2,7 +2,7 @@
 Authors:	Eva Griffin, Logan Anderson
 Course:		CS 340 - Introduction to Databases
 Date:		03/10/2025
-Assignment:	Project Step 5 DRAFT VERSION - DML SQL Queries
+Assignment:	Project Step 6 - Portfolio
 
 Code Citations:
 -------------------------------------------------------------------------------------------
