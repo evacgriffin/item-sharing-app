@@ -402,8 +402,8 @@ def edit_transfers(id):
                                 'JOIN Users AS LendingUsers ON LendingUsers.userID = TransferUsers.lendingUserID '
                                 'JOIN Users AS BorrowingUsers ON BorrowingUsers.userID = TransferUsers.borrowingUserID '
                                 'WHERE TransferUsers.transferID = %s;')
-        lending_users_get_query = 'SELECT userName AS lendingUserName FROM Users;'
-        borrowing_users_get_query = 'SELECT userName AS borrowingUserName FROM Users;'
+        lending_users_get_query = 'SELECT userID, userName AS lendingUserName FROM Users;'
+        borrowing_users_get_query = 'SELECT userID, userName AS borrowingUserName FROM Users;'
         with connect() as db_connection:
             transfer_cursor = db.execute_query(db_connection=db_connection, query=transfer_get_query, query_params=(id, ))
             lending_users_cursor = db.execute_query(db_connection=db_connection, query=lending_users_get_query)

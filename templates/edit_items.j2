@@ -24,6 +24,10 @@ URL: http://www.w3schools.com/tags/tag_form.asp
 W3 Schools: HTML <select> Tag
 Retrieved on: 03/04/2025
 URL: http://www.w3schools.com/tags/tag_form.asp
+
+W3 Schools: HTML Input Attributes
+Retrieved on: 03/14/2025
+URL: https://www.w3schools.com/html/html_form_attributes.asp
 #}
 
 {# Edit Items Page #}
@@ -56,12 +60,19 @@ URL: http://www.w3schools.com/tags/tag_form.asp
                 <input type="hidden" value="{{item[0].itemID}}" id="itemID" name="itemID" required>
 
                 <label class="required">Item Name:</label>
-                <input type="text" id="item_name" name="item_name" required>
+                <input type="text" id="item_name" name="item_name" value={{item[0]['Item Name']}} required>
 
                 <label class="required">Item Category:</label>
                 <select id="category_name" name="category_name" required><br><br>
+                    {#
+                    The code to select the current value in the dropdown is based on:
+                    stackoverflow post "Set default value for select html element in Jinja template?"
+                    Answer from User Matt Healy
+                    Retrieved on: 03/14/2025
+                    URL: https://stackoverflow.com/questions/29451208/set-default-value-for-select-html-element-in-jinja-template
+                    #}
                     {% for category in categories %}
-                        <option value="{{category['categoryName']}}">{{category['categoryName']}}</option>
+                        <option value="{{category['categoryName']}}" {% if category['categoryName']==item[0]['Category Name'] %} selected="selected" {% endif %}>{{category['categoryName']}}</option>
                     {% endfor %}
                 </select>
             </fieldset>

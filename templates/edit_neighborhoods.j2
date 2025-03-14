@@ -20,6 +20,10 @@ URL: http://www.w3schools.com/tags/tag_button.asp
 W3 Schools: HTML <form> Tag
 Retrieved on: 02/09/2025
 URL: http://www.w3schools.com/tags/tag_form.asp
+
+W3 Schools: HTML Input Attributes
+Retrieved on: 03/14/2025
+URL: https://www.w3schools.com/html/html_form_attributes.asp
 #}
 
 {# Edit Neighborhoods Page #}
@@ -52,7 +56,7 @@ URL: http://www.w3schools.com/tags/tag_form.asp
                 <input type="hidden" value="{{neighborhood[0].neighborhoodID}}" id="neighborhoodID" name="neighborhoodID" required>
 
                 <label class="required">Neighborhood Name:</label>
-                <input type="text" id="neighborhood_name" name="neighborhood_name" required>
+                <input type="text" id="neighborhood_name" name="neighborhood_name" value={{neighborhood[0]['Neighborhood Name']}} required>
             </fieldset>
 
             <input class="btn" type="submit" name="edit_neighborhood" value="Submit">
