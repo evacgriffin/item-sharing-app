@@ -130,7 +130,7 @@ INSERT INTO Users(userName, password, email, neighborhoodID)
 VALUES ('katie775', 'example_pw_1', 'katie775@gmail.com', 5),
 ('friendly_neighbor3', 'example_pw_2', 'neighbor3@gmail.com', 3),
 ('ben.smith89', 'example_pw_3', 'bsmith89@gmail.com', 4),
-('griff123', 'example_pw_4', 'griff123@hotmail.com', 1),
+('griff123', 'example_pw_4', 'griff123@hotmail.com', NULL),
 ('camper007', 'example_pw_5', 'camper7@gmail.com', 2);
 
 -- Add sample data to Items table
