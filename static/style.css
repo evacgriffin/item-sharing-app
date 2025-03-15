@@ -14,6 +14,18 @@ Retrieved on: 02/08/2025
 URL: http://www.w3schools.com/css/css_table_style.asp
 */
 
+/* ---------- Edit & Delete Buttons ---------- */
+td a {
+    background-color: #c92306;
+    color: whitesmoke;
+    text-decoration: none;
+    border: 1px black solid;
+    border-radius: 5px;
+    padding: 4px 6px;
+    font-size: 15px;
+    font-weight: 300;
+}
+
 /* ---------- Nav Bar ---------- */
 ul {
     list-style-type: none;
