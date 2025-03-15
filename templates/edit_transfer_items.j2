@@ -83,7 +83,7 @@ URL: https://www.w3schools.com/html/html_form_attributes.asp
                         <option value="{{transfer['transferID']}}" {% if transfer['transferID']==transfer_item[0]['Transfer ID'] %} selected="selected" {% endif %}>Transfer ID {{transfer['transferID']}}: {{transfer['Lending User']}} &rarr; {{transfer['Borrowing User']}}</option>
                     {% endfor %}
                 </select>
-                <label>Quantity:</label>
+                <label class="required">Quantity:</label>
                 <input type="number" required min="1" step="1" id="quantity" name="quantity" value={{transfer_item[0]['Quantity']}}><br><br>
                 <label>Milliliters:</label>
                 <input type="number" min="0" step="0.01" id="milliliters" name="milliliters" value={{transfer_item[0]['Milliliters']}}><br><br>

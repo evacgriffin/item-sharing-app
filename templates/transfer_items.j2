@@ -91,7 +91,7 @@ URL: http://www.w3schools.com/tags/tag_form.asp
                     <option value="{{transfer['transferID']}}">Transfer ID {{transfer['transferID']}}: {{transfer['Lending User']}} &rarr; {{transfer['Borrowing User']}}</option>
                 {% endfor %}
             </select>
-            <label>Quantity:</label>
+            <label class="required">Quantity:</label>
             <input type="number" required min="1" step="1" value="1" id="quantity" name="quantity"><br><br>
             <label>Milliliters:</label>
             <input type="number" min="0" step="0.01" id="milliliters" name="milliliters"><br><br>
