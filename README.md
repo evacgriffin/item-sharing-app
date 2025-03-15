@@ -32,16 +32,20 @@ Users can click "Delete" next to a data entry to delete the data entry.
 
 ## Screenshots
 ![homepage](/screenshots/homepage.png)
-Homepage of the Item Sharing App
+Homepage of the Item Sharing App.
+
 
 ![read-user](/screenshots/read_user.png)
 Example READ/DELETE: Each page displays a table, showing all data stored in the database for the entity. The user can click the "Delete" link to remove an entity's instance from the database.
 
+
 ![add-user](/screenshots/add_user.png)
 Example for ADD: Each page contains an "Add" form, allowing the user to add a new data entry for an entity.
 
+
 ![edit-user](/screenshots/edit_user.png)
 Example for EDIT: Clicking the "Edit" link next to a data entry routes the user to an Edit page.
+
 
 ## Citations
 
