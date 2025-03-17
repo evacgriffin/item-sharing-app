@@ -10,7 +10,7 @@
 - [Collaborators](#collaborators)
 
 ## Description
-The **Item Sharing App** allows database administrators to manually add, edit, and delete data to manage the database for a neighborhood item sharing app. This application was made as a term-long project in CS 340 - Introduction to Databases at Oregon State University, in response to to the November 2024 bomb cyclone that hit and caused large-scale damage in the Pacific Northwest.
+The **Item Sharing App** allows database administrators to manually add, edit, and delete data to manage the database for a neighborhood item sharing app. This application was made as a term-long project in CS 340 - Introduction to Databases at Oregon State University, in response to the November 2024 bomb cyclone that hit and caused large-scale damage in the Pacific Northwest.
 
 ## Run the App
 
