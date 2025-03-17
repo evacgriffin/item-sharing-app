@@ -175,4 +175,4 @@ URL: https://jinja.palletsprojects.com/en/stable/templates/#for
 ## Collaborators
 
 - [Eva Griffin](https://github.com/evacgriffin)
-- [Logan Anderson](https://github.com/evacgriffin)
+- [Logan Anderson](https://github.com/lomacanderson)
