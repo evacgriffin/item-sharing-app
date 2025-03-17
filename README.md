@@ -30,9 +30,9 @@ The **Item Sharing App** allows database administrators to manually add, edit, a
     APP_MYSQL_DB_NAME = # Name of the MySQL database to be used by the application
     ```
 5. Install Gunicorn to deploy the application
-    '''shell
+   ```shell
    $ pip install gunicorn
-   '''
+    ```
 6. Run Gunicorn:
     ```shell
     gunicorn -w 4 -b 0.0.0.0:8000 app:app
